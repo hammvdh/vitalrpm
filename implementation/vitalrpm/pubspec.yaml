@@ -35,6 +35,7 @@ dependencies:
   google_fonts: ^3.0.1
   provider: ^6.0.5
   shared_preferences: ^2.0.17
+  animated_bottom_navigation_bar: ^1.1.0+1
 
 dev_dependencies:
   flutter_test:
