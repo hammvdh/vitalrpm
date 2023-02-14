@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "93070175794",
+    "project_id": "vitalrpm-7cd41",
+    "storage_bucket": "vitalrpm-7cd41.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:93070175794:android:677ff999f82a689cf0d62b",
+        "android_client_info": {
+          "package_name": "com.example.vitalrpm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "93070175794-vgb9ra4thicvsr6oj76puc9s19188dh6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcmQeu6lUgEFAgqui-eaSc8Ur37W2MOBw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "93070175794-vgb9ra4thicvsr6oj76puc9s19188dh6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "93070175794-mreah2h45jormh56b93kp1o4582obbnk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.vitalrpm"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
