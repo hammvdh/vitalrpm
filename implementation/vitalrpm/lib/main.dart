@@ -21,7 +21,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -83,7 +83,7 @@ class _MyAppState extends State<MyApp> {
         title: 'Vital - Remote Patient Monitoring',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primaryColor: AppColors.bgBlue,
+          primaryColor: AppColors.blue,
           scaffoldBackgroundColor: Colors.white,
         ),
         locale: _locale,
