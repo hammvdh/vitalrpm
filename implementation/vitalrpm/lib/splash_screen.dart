@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -5,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/main.dart';
-import 'package:vitalrpm/screens/home_screen.dart';
+import 'package:vitalrpm/screens/auth/login_screen.dart';
 
 import 'const/storage_keys.dart';
 import 'providers/common_provider.dart';
@@ -23,7 +25,7 @@ class SplashScreenState extends State<SplashScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const HomeDashboard(),
+          builder: (context) => const LoginScreen(),
         ),
       );
     });
@@ -64,8 +66,15 @@ class SplashScreenState extends State<SplashScreen> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: AppColors.bgBlue,
-      body: Center(child: Text('Splash!!')),
+      backgroundColor: Colors.white,
+      body: Center(
+        child: SizedBox(
+          width: screenWidth / 1.5,
+          child: Image.asset(
+            'assets/logo_main.png',
+          ),
+        ),
+      ),
     );
   }
 }
