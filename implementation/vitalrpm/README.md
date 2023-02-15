@@ -1,6 +1,6 @@
-# vitalrpm
+# Vital - Remote Patient Monitoring
 
-A new Flutter project.
+This is the implementation of the vitalrpm system using Flutter as the system framework.
 
 ## Getting Started
 

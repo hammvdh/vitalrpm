@@ -49,3 +49,4 @@ flutter:
     - lang/en.json
     - lang/si.json
     - assets/
+    - assets/images/
