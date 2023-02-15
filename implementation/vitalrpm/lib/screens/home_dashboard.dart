@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vitalrpm/const/color_const.dart';
+import 'package:vitalrpm/screens/measurement/measurement_history_screen.dart';
 import '../app_localizations.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 
@@ -24,12 +26,13 @@ class _HomeDashboardState extends State<HomeDashboard> {
   }
 
   final iconList = <IconData>[
-    Icons.home_max_outlined,
-    Icons.assessment_rounded,
+    Icons.home_outlined,
+    Icons.assessment_outlined,
     Icons.person_outlined,
     Icons.settings_outlined,
   ];
-  var bottomNavIndex = 0;
+
+  var bottomNavIndex = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -117,6 +120,15 @@ class _HomeDashboardState extends State<HomeDashboard> {
                             color: AppColors.darkBlue,
                             borderRadius: BorderRadius.circular(50),
                           ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(50),
+                            child: Image(
+                              width: MediaQuery.of(context).size.width,
+                              image:
+                                  const AssetImage('assets/images/account.png'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         )
                       ],
                     ),
@@ -147,7 +159,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
                               child: Text(
                                 'Measurements',
                                 style: GoogleFonts.inter(
-                                  fontSize: 24,
+                                  fontSize: 21,
                                   color: AppColors.textblack,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -174,80 +186,91 @@ class _HomeDashboardState extends State<HomeDashboard> {
                             primary: false,
                             itemCount: measurementList.length,
                             itemBuilder: (context, index) {
-                              return Container(
-                                margin: const EdgeInsets.only(top: 10),
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                      width: 1,
-                                      color: const Color(0xFFF0EFF2)
-                                          .withOpacity(0.8),
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (context) =>
+                                          const MeasurementScreen(),
                                     ),
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.white,
-                                    boxShadow: const [
-                                      BoxShadow(
-                                          color: Color(0xFFDEE2E5),
-                                          offset: Offset(0, 30),
-                                          blurRadius: 45)
-                                    ]),
-                                height: 105,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Blood Pressure',
-                                            style: GoogleFonts.inter(
-                                              fontSize: 15,
-                                              color: AppColors.darkBlue,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          Text(
-                                            'Last Reading - 5 hours ago',
-                                            style: GoogleFonts.inter(
-                                              fontSize: 14,
-                                              color: AppColors.textgrey,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          Text(
-                                            '120/80 (mmgH)',
-                                            style: GoogleFonts.inter(
-                                              fontSize: 18,
-                                              color: AppColors.blue,
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          ),
-                                        ],
+                                  );
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(top: 10),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                        width: 1,
+                                        color: const Color(0xFFF0EFF2)
+                                            .withOpacity(0.8),
                                       ),
-                                      Column(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 11,
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.white,
+                                      boxShadow: const [
+                                        BoxShadow(
+                                            color: Color(0xFFDEE2E5),
+                                            offset: Offset(0, 30),
+                                            blurRadius: 45)
+                                      ]),
+                                  height: 105,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Blood Pressure',
+                                              style: GoogleFonts.inter(
+                                                fontSize: 15,
+                                                color: AppColors.darkBlue,
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                             ),
-                                            child: Icon(
-                                              Icons.chevron_right,
-                                              color: AppColors.darkBlue,
-                                              size: 25,
+                                            Text(
+                                              'Last Reading - 5 hours ago',
+                                              style: GoogleFonts.inter(
+                                                fontSize: 14,
+                                                color: AppColors.textgrey,
+                                                fontWeight: FontWeight.w500,
+                                              ),
                                             ),
-                                          ),
-                                          Container()
-                                        ],
-                                      )
-                                    ],
+                                            Text(
+                                              '120/80 (mmgH)',
+                                              style: GoogleFonts.inter(
+                                                fontSize: 18,
+                                                color: AppColors.blue,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Column(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 11,
+                                              ),
+                                              child: Icon(
+                                                Icons.chevron_right,
+                                                color: AppColors.darkBlue,
+                                                size: 25,
+                                              ),
+                                            ),
+                                            Container()
+                                          ],
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );
@@ -265,7 +288,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
                               child: Text(
                                 'Pending Tasks',
                                 style: GoogleFonts.inter(
-                                  fontSize: 24,
+                                  fontSize: 21,
                                   color: AppColors.textblack,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -287,8 +310,16 @@ class _HomeDashboardState extends State<HomeDashboard> {
                         ),
                         const SizedBox(height: 20),
                         Container(
-                          height: 150,
+                          height: 100,
                           margin: const EdgeInsets.symmetric(horizontal: 15),
+                          decoration: BoxDecoration(
+                              color: const Color(0XFFD1E2EC),
+                              borderRadius: BorderRadius.circular(10)),
+                        ),
+                        Container(
+                          height: 100,
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
                           decoration: BoxDecoration(
                               color: const Color(0XFFD1E2EC),
                               borderRadius: BorderRadius.circular(10)),
