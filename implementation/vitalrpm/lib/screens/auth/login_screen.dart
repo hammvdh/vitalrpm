@@ -1,6 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:vitalrpm/const/color_const.dart';
+import 'package:vitalrpm/providers/user_provider.dart';
+import 'package:vitalrpm/screens/auth/auth_wrapper.dart';
 import 'package:vitalrpm/screens/home_dashboard.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -12,6 +16,17 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  late UserProvider userProvider;
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    userProvider = context.read<UserProvider>();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,6 +114,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 15),
                           child: Center(
                             child: TextFormField(
+                              controller: emailController,
+                              textInputAction: TextInputAction.next,
                               validator: (input) {
                                 if (input!.isEmpty) {
                                   return 'Please type email';
@@ -155,6 +172,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 15),
                           child: Center(
                             child: TextFormField(
+                              controller: passwordController,
+                              textInputAction: TextInputAction.done,
                               validator: (input) {
                                 if (input!.length < 6) {
                                   return 'Your password needs to be at least 6 characters';
@@ -207,7 +226,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 30),
                       Center(
                         child: GestureDetector(
-                          // onTap: uSignIn,
+                          onTap: login,
                           child: Container(
                             width: screenWidth / 2,
                             decoration: BoxDecoration(
@@ -235,12 +254,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       Center(
                         child: GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const HomeDashboard(),
-                              ),
-                            );
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => const HomeDashboard(),
+                            //   ),
+                            // );
                           },
                           child: Column(
                             children: [
@@ -274,5 +293,20 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  void login() {
+    print('-------------------- Login in Progress -----------------------');
+    var response = userProvider.login(emailController, passwordController);
+    if (response == "success") {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const AuthenticationWrapper(),
+        ),
+      );
+    } else {
+      //Display Error Message
+    }
   }
 }
