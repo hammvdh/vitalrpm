@@ -59,7 +59,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
-                height: 160,
+                height: 165,
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -153,7 +153,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
                                         offset: Offset(0, 20),
                                         blurRadius: 10)
                                   ]),
-                              height: 100,
+                              height: 105,
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 15, vertical: 10),
