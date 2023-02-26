@@ -4,9 +4,10 @@ class UserModel {
   String documentId;
   String userId;
   String userType;
-  String name;
+  String firstName;
+  String lastName;
   String email;
-  String mobile;
+  String mobileNo;
   int genderId;
   DateTime? dateOfBirth;
   String country;
@@ -16,10 +17,11 @@ class UserModel {
   UserModel({
     this.documentId = "",
     this.userId = "",
-    this.userType = "",
-    this.name = "",
+    this.userType = "P",
+    this.firstName = "",
+    this.lastName = "",
     this.email = "",
-    this.mobile = "",
+    this.mobileNo = "",
     this.genderId = 0,
     this.country = "",
   });
