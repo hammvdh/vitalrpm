@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:vitalrpm/const/color_const.dart';
+import 'package:vitalrpm/providers/user_provider.dart';
 import 'package:vitalrpm/screens/measurement/measurement_history_screen.dart';
 import '../app_localizations.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
@@ -20,8 +23,10 @@ class _HomeDashboardState extends State<HomeDashboard> {
 
   List measurementList = List<String>.generate(3, (i) => 'Measurement $i');
 
+  late UserProvider userProvider;
   @override
   void initState() {
+    userProvider = context.read<UserProvider>();
     super.initState();
   }
 
@@ -113,20 +118,25 @@ class _HomeDashboardState extends State<HomeDashboard> {
                             )
                           ],
                         ),
-                        Container(
-                          height: 70,
-                          width: 70,
-                          decoration: BoxDecoration(
-                            color: AppColors.darkBlue,
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(50),
-                            child: Image(
-                              width: MediaQuery.of(context).size.width,
-                              image:
-                                  const AssetImage('assets/images/account.png'),
-                              fit: BoxFit.cover,
+                        GestureDetector(
+                          onTap: () {
+                            userProvider.logout();
+                          },
+                          child: Container(
+                            height: 70,
+                            width: 70,
+                            decoration: BoxDecoration(
+                              color: AppColors.darkBlue,
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(50),
+                              child: Image(
+                                width: MediaQuery.of(context).size.width,
+                                image: const AssetImage(
+                                    'assets/images/account.png'),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         )

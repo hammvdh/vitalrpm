@@ -11,6 +11,7 @@ import 'package:vitalrpm/app_localizations.dart';
 import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/firebase_options.dart';
 import 'package:vitalrpm/providers/common_provider.dart';
+import 'package:vitalrpm/providers/user_provider.dart';
 import 'package:vitalrpm/splash_screen.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -78,6 +79,7 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => CommonProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
       child: MaterialApp(
         title: 'Vital - Remote Patient Monitoring',

@@ -1,11 +1,12 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/providers/user_provider.dart';
 import 'package:vitalrpm/screens/auth/auth_wrapper.dart';
-import 'package:vitalrpm/screens/home_dashboard.dart';
+import 'package:vitalrpm/screens/auth/register_screen.dart';
+import 'package:vitalrpm/widgets/loading_overlay.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -254,12 +255,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       Center(
                         child: GestureDetector(
                           onTap: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => const HomeDashboard(),
-                            //   ),
-                            // );
+                            Navigator.pushReplacement(
+                              context,
+                              CupertinoPageRoute(
+                                builder: (context) => const RegisterScreen(),
+                              ),
+                            );
                           },
                           child: Column(
                             children: [
@@ -295,18 +296,17 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void login() {
+  void login() async {
     print('-------------------- Login in Progress -----------------------');
-    var response = userProvider.login(emailController, passwordController);
-    if (response == "success") {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const AuthenticationWrapper(),
-        ),
-      );
-    } else {
-      //Display Error Message
-    }
+    // LoadingOverlay.of(context).show();
+    await userProvider.login(emailController, passwordController);
+
+    // LoadingOverlay.of(context).hide();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AuthenticationWrapper(),
+      ),
+    );
   }
 }

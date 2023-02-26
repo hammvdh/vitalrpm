@@ -5,9 +5,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/main.dart';
-import 'package:vitalrpm/screens/auth/login_screen.dart';
+import 'package:vitalrpm/screens/auth/auth_wrapper.dart';
 
 import 'const/storage_keys.dart';
 import 'providers/common_provider.dart';
@@ -21,11 +20,11 @@ class SplashScreen extends StatefulWidget {
 
 class SplashScreenState extends State<SplashScreen> {
   SplashScreenState() {
-    Timer(const Duration(milliseconds: 4800), () {
+    Timer(const Duration(milliseconds: 2000), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const LoginScreen(),
+          builder: (context) => const AuthenticationWrapper(),
         ),
       );
     });
