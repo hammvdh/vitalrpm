@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +16,6 @@ class AuthenticationWrapper extends StatefulWidget {
 }
 
 class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
-  // ignore: prefer_typing_uninitialized_variables
   late final firebaseUser;
 
   late UserProvider userProvider;
@@ -28,15 +29,23 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
   }
 
   Future<void> initialize() async {
-    if (firebaseUser != null) {
-      // userProvider.initialize(firebaseUser.uid, context);
-      return goToHome();
-    } else {
-      return goToLogin();
+    if (mounted) {
+      Future.delayed(Duration.zero, () {
+        if (firebaseUser != null) {
+          userProvider.initialize(firebaseUser.uid, context);
+          return goToHome();
+        } else {
+          return goToLogin();
+        }
+      });
     }
   }
 
-  Future goToHome() {
+  // Future<void> checkFirstSeen(BuildContext context, firebaseUser) async {
+  //
+  // }
+
+  goToHome() {
     return Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -45,7 +54,7 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
     );
   }
 
-  Future goToLogin() {
+  goToLogin() {
     return Navigator.pushReplacement(
       context,
       MaterialPageRoute(

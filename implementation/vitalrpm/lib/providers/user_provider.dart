@@ -1,13 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:vitalrpm/models/user_model.dart';
-import 'package:vitalrpm/screens/auth/auth_wrapper.dart';
-import 'package:vitalrpm/widgets/loading_overlay.dart';
 
 class UserProvider extends ChangeNotifier {
   late UserModel loginUser;

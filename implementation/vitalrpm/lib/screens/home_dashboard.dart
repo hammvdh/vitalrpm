@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/providers/user_provider.dart';
+import 'package:vitalrpm/screens/auth/auth_wrapper.dart';
 import 'package:vitalrpm/screens/measurement/measurement_history_screen.dart';
 import '../app_localizations.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
@@ -121,6 +122,13 @@ class _HomeDashboardState extends State<HomeDashboard> {
                         GestureDetector(
                           onTap: () {
                             userProvider.logout();
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const AuthenticationWrapper(),
+                              ),
+                            );
                           },
                           child: Container(
                             height: 70,
