@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/providers/user_provider.dart';
 import 'package:vitalrpm/screens/auth/auth_wrapper.dart';
+import 'package:vitalrpm/screens/measurement/add_measurement_screen.dart';
 import 'package:vitalrpm/screens/measurement/measurement_history_screen.dart';
 import '../app_localizations.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
@@ -54,7 +55,14 @@ class _HomeDashboardState extends State<HomeDashboard> {
         backgroundColor: AppColors.darkBlue,
         floatingActionButton: FloatingActionButton(
           backgroundColor: AppColors.blue,
-          onPressed: (() => {}),
+          onPressed: (() => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddMeasurementScreen(),
+                  ),
+                )
+              }),
           child: const Icon(
             Icons.add,
             color: Colors.white,
