@@ -31,12 +31,14 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
   Future<void> initialize() async {
     if (mounted) {
       Future.delayed(Duration.zero, () {
-        if (firebaseUser != null) {
-          userProvider.initialize(firebaseUser.uid, context);
-          return goToHome();
-        } else {
-          return goToLogin();
-        }
+        return goToHome();
+
+        // if (firebaseUser != null) {
+        //   userProvider.initialize(firebaseUser.uid, context);
+        //   return goToHome();
+        // } else {
+        //   return goToLogin();
+        // }
       });
     }
   }
