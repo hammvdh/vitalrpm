@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vitalrpm/const/color_const.dart';
+import 'package:vitalrpm/const/measurement_types.dart';
 import 'package:vitalrpm/providers/user_provider.dart';
 import 'package:vitalrpm/screens/auth/auth_wrapper.dart';
 import 'package:vitalrpm/screens/measurement/add_measurement_screen.dart';
@@ -23,13 +25,19 @@ class _HomeDashboardState extends State<HomeDashboard> {
   late AppLocalizations local;
   double screenWidth = 0;
 
-  List measurementList = List<String>.generate(3, (i) => 'Measurement $i');
+  List<Map<String, dynamic>> measurementList = [];
 
   late UserProvider userProvider;
   @override
-  void initState() {
+  initState() {
     userProvider = context.read<UserProvider>();
+    initialize();
     super.initState();
+  }
+
+  initialize() async {
+    measurementList = await getLastMeasurements();
+    setState(() {});
   }
 
   final iconList = <IconData>[
@@ -40,6 +48,48 @@ class _HomeDashboardState extends State<HomeDashboard> {
   ];
 
   var bottomNavIndex = 1;
+
+  getLastMeasurements() async {
+    final db = FirebaseFirestore.instance;
+    final measurementsRef = db.collection('measurements');
+    final measurementTypes = MeasurementTypes.measurementTypes;
+
+    final lastMeasurements = <Map<String, dynamic>>[];
+    for (String type in measurementTypes) {
+      final snapshot = await measurementsRef
+          .where('type', isEqualTo: type)
+          .orderBy('date', descending: true)
+          .orderBy('time', descending: true)
+          .limit(1)
+          .get();
+      if (snapshot.docs.isNotEmpty) {
+        final lastMeasurement = snapshot.docs.first.data();
+        final date = DateTime.parse(lastMeasurement['date']);
+        final time = DateTime.parse("2023-04-27 ${lastMeasurement['time']}:00");
+        final timestamp =
+            DateTime(date.year, date.month, date.day, time.hour, time.minute);
+        final diff = DateTime.now().difference(timestamp);
+        final duration = Duration(seconds: diff.inSeconds);
+        final lastReading = 'Last Reading - ${_getTimeAgo(duration)} ago';
+        lastMeasurement['lastReading'] = lastReading;
+        lastMeasurements.add(lastMeasurement);
+      }
+    }
+    return lastMeasurements;
+  }
+
+  String _getTimeAgo(Duration duration) {
+    if (duration.inSeconds < 60) {
+      return '${duration.inSeconds} seconds';
+    } else if (duration.inMinutes < 60) {
+      return '${duration.inMinutes} minutes';
+    } else if (duration.inHours < 24) {
+      return '${duration.inHours} hours';
+    } else if (duration.inDays < 30) {
+      return '${duration.inDays} days';
+    }
+    return '${duration.inDays} days';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +111,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
                   MaterialPageRoute(
                     builder: (context) => const AddMeasurementScreen(),
                   ),
-                )
+                ).then((value) => {initialize()})
               }),
           child: const Icon(
             Icons.add,
@@ -191,18 +241,6 @@ class _HomeDashboardState extends State<HomeDashboard> {
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(
-                                'VIEW ALL',
-                                style: GoogleFonts.inter(
-                                  fontSize: 14,
-                                  color: AppColors.blue,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
                           ],
                         ),
                         Padding(
@@ -212,6 +250,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
                             primary: false,
                             itemCount: measurementList.length,
                             itemBuilder: (context, index) {
+                              final item = measurementList[index];
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.push(
@@ -255,15 +294,15 @@ class _HomeDashboardState extends State<HomeDashboard> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Blood Pressure',
+                                              item['type'],
                                               style: GoogleFonts.inter(
-                                                fontSize: 15,
+                                                fontSize: 16,
                                                 color: AppColors.darkBlue,
                                                 fontWeight: FontWeight.w600,
                                               ),
                                             ),
                                             Text(
-                                              'Last Reading - 5 hours ago',
+                                              item['lastReading'],
                                               style: GoogleFonts.inter(
                                                 fontSize: 14,
                                                 color: AppColors.textgrey,
@@ -271,7 +310,9 @@ class _HomeDashboardState extends State<HomeDashboard> {
                                               ),
                                             ),
                                             Text(
-                                              '120/80 (mmgH)',
+                                              item['type'] == "Blood Pressure"
+                                                  ? '${item['reading']['systolic']}/${item['reading']['diastolic']} (${item['unit']})'
+                                                  : '${item['reading']} (${item['unit']})',
                                               style: GoogleFonts.inter(
                                                 fontSize: 18,
                                                 color: AppColors.blue,
@@ -303,54 +344,54 @@ class _HomeDashboardState extends State<HomeDashboard> {
                             },
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(
-                                'Pending Tasks',
-                                style: GoogleFonts.inter(
-                                  fontSize: 21,
-                                  color: AppColors.textblack,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(
-                                'VIEW ALL',
-                                style: GoogleFonts.inter(
-                                  fontSize: 14,
-                                  color: AppColors.blue,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        Container(
-                          height: 100,
-                          margin: const EdgeInsets.symmetric(horizontal: 15),
-                          decoration: BoxDecoration(
-                              color: const Color(0XFFD1E2EC),
-                              borderRadius: BorderRadius.circular(10)),
-                        ),
-                        Container(
-                          height: 100,
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 10),
-                          decoration: BoxDecoration(
-                              color: const Color(0XFFD1E2EC),
-                              borderRadius: BorderRadius.circular(10)),
-                        ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 50),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //   crossAxisAlignment: CrossAxisAlignment.center,
+                        //   children: [
+                        //     Padding(
+                        //       padding:
+                        //           const EdgeInsets.symmetric(horizontal: 20),
+                        //       child: Text(
+                        //         'Pending Tasks',
+                        //         style: GoogleFonts.inter(
+                        //           fontSize: 21,
+                        //           color: AppColors.textblack,
+                        //           fontWeight: FontWeight.w600,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     Padding(
+                        //       padding:
+                        //           const EdgeInsets.symmetric(horizontal: 20),
+                        //       child: Text(
+                        //         'VIEW ALL',
+                        //         style: GoogleFonts.inter(
+                        //           fontSize: 14,
+                        //           color: AppColors.blue,
+                        //           fontWeight: FontWeight.w600,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        // const SizedBox(height: 20),
+                        // Container(
+                        //   height: 100,
+                        //   margin: const EdgeInsets.symmetric(horizontal: 15),
+                        //   decoration: BoxDecoration(
+                        //       color: const Color(0XFFD1E2EC),
+                        //       borderRadius: BorderRadius.circular(10)),
+                        // ),
+                        // Container(
+                        //   height: 100,
+                        //   margin: const EdgeInsets.symmetric(
+                        //       horizontal: 15, vertical: 10),
+                        //   decoration: BoxDecoration(
+                        //       color: const Color(0XFFD1E2EC),
+                        //       borderRadius: BorderRadius.circular(10)),
+                        // ),
+                        // const SizedBox(height: 20),
                       ]),
                 )
               ],
