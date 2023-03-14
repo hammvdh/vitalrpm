@@ -6,6 +6,8 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:vitalrpm/widgets/label_date_field_widget.dart';
 import 'package:vitalrpm/widgets/label_text_field_widget.dart';
 import 'package:vitalrpm/widgets/label_time_field_widget.dart';
+// ignore: depend_on_referenced_packages
+import 'package:intl/intl.dart';
 
 class AddMeasurementScreen extends StatefulWidget {
   const AddMeasurementScreen({super.key});
@@ -26,13 +28,11 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
 
   final sysController = TextEditingController();
   final diaController = TextEditingController();
-  final heartRateController = TextEditingController();
-  final tempController = TextEditingController();
-  final resprateController = TextEditingController();
-  final o2SatController = TextEditingController();
+  final readingController = TextEditingController();
 
-  String selectedTime = '';
-  String selectedDate = '';
+  String selectedTime =
+      "${TimeOfDay.now().hour < 10 ? "0" : ""}${TimeOfDay.now().hour}:${TimeOfDay.now().minute < 10 ? "0" : ""}${TimeOfDay.now().minute}";
+  String selectedDate = DateTime.now().toString();
 
   final mealsController = TextEditingController();
   final notesController = TextEditingController();
@@ -40,12 +40,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
   void resetVariables() {
     sysController.clear();
     diaController.clear();
-    heartRateController.clear();
-    tempController.clear();
-    resprateController.clear();
-    o2SatController.clear();
-    selectedDate = '';
-    selectedTime = '';
+    readingController.clear();
     mealsController.clear();
     notesController.clear();
   }
@@ -174,7 +169,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                 Flexible(
                                   child: LabelTextFieldWidget(
                                     label: "",
-                                    controller: resprateController,
+                                    controller: readingController,
                                     isRequired: true,
                                     maxLength: 3,
                                     hintText: "Enter a value.",
@@ -193,7 +188,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                 Flexible(
                                   child: LabelTextFieldWidget(
                                     label: "",
-                                    controller: o2SatController,
+                                    controller: readingController,
                                     isRequired: true,
                                     maxLength: 2,
                                     hintText: "Enter a value.",
@@ -212,7 +207,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                 Flexible(
                                   child: LabelTextFieldWidget(
                                     label: "",
-                                    controller: heartRateController,
+                                    controller: readingController,
                                     isRequired: true,
                                     maxLength: 3,
                                     hintText: "Enter a value.",
@@ -231,7 +226,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                 Flexible(
                                   child: LabelTextFieldWidget(
                                     label: "",
-                                    controller: tempController,
+                                    controller: readingController,
                                     isRequired: true,
                                     maxLength: 3,
                                     hintText: "Enter a value.",
@@ -420,22 +415,55 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
   }
 
   Future<void> addMeasurement() async {
-    // DocumentReference measurementDocument;
-    // FirebaseFirestore.instance.runTransaction((transaction) async {
-    //   try {
-    //     measurementDocument =
-    //         FirebaseFirestore.instance.collection('measurement').doc();
-    //     transaction.set(measurementDocument, {
-    //       'docId': measurementDocument.id,
-    //       'type': measurementTypeController.text,
-    //       'readingDate': selectedDate,
-    //       'readingTime': selectedTime,
-    //       'meals': mealsController.text,
-    //       'notes': notesController.text
-    //     });
-    //   } catch (e) {
-    //     print("Add Measurement - Unable to add measurement - $e");
-    //   }
-    // });
+    DocumentReference measurementDocument;
+    final type = measurementTypeController.text;
+    final unit = getMeasurementUnit(type);
+    final systolic = sysController.text;
+    final diastolic = diaController.text;
+    final reading = readingController.text;
+    final meal = mealsController.text;
+    final notes = notesController.text;
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      try {
+        measurementDocument =
+            FirebaseFirestore.instance.collection('measurements').doc();
+        transaction.set(measurementDocument, {
+          'docId': measurementDocument.id,
+          'type': type,
+          'reading': type == "Blood Pressure"
+              ? {
+                  'systolic': systolic,
+                  'diastolic': diastolic,
+                }
+              : reading,
+          'unit': unit,
+          'date': selectedDate,
+          'time': selectedTime,
+          'timestamp': Timestamp.now(),
+          'meals': meal,
+          'notes': notes
+        });
+
+        Navigator.pop(context);
+      } catch (e) {
+        print("Add Measurement - Unable to add measurement - $e");
+      }
+    });
+  }
+
+  getMeasurementUnit(String type) {
+    String unit = '';
+    if (type == "Blood Pressure") {
+      unit = "mmHg";
+    } else if (type == "Body Temperature") {
+      unit = "°F";
+    } else if (type == "Heart Rate") {
+      unit = "bpm";
+    } else if (type == "Blood Oxygen Saturation") {
+      unit = "%";
+    } else if (type == "Respiratory Rate") {
+      unit = "bpm";
+    }
+    return unit;
   }
 }
