@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vitalrpm/const/color_const.dart';
@@ -29,8 +30,25 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
   final tempController = TextEditingController();
   final resprateController = TextEditingController();
   final o2SatController = TextEditingController();
+
+  String selectedTime = '';
+  String selectedDate = '';
+
   final mealsController = TextEditingController();
   final notesController = TextEditingController();
+
+  void resetVariables() {
+    sysController.clear();
+    diaController.clear();
+    heartRateController.clear();
+    tempController.clear();
+    resprateController.clear();
+    o2SatController.clear();
+    selectedDate = '';
+    selectedTime = '';
+    mealsController.clear();
+    notesController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +124,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 20),
@@ -125,7 +143,9 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                           controller: measurementTypeController,
                           excludeSelected: false,
                           onChanged: (item) {
-                            setState(() {});
+                            setState(() {
+                              resetVariables();
+                            });
                           },
                           fillColor: const Color(0XFFEDEAEA),
                           borderRadius: BorderRadius.circular(5.0),
@@ -231,6 +251,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                   child: LabelTextFieldWidget(
                                     label: "Systolic",
                                     controller: sysController,
+                                    hintText: "Systolic Value",
                                     isRequired: true,
                                     maxLength: 3,
                                     suffixText: "mmHg",
@@ -242,6 +263,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                   child: LabelTextFieldWidget(
                                     label: "Diastolic",
                                     controller: diaController,
+                                    hintText: "Diastolic Value",
                                     isRequired: true,
                                     maxLength: 3,
                                     suffixText: "mmHg",
@@ -259,7 +281,9 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                   label: "Reading Date",
                                   initialDate: DateTime.now(),
                                   isLastDateToday: true,
-                                  onSelected: (DateTime date) {},
+                                  onSelected: (DateTime date) {
+                                    selectedDate = date.toString();
+                                  },
                                 ),
                               ),
                               const SizedBox(width: 10),
@@ -269,7 +293,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                   value:
                                       "${TimeOfDay.now().hour < 10 ? "0" : ""}${TimeOfDay.now().hour}:${TimeOfDay.now().minute < 10 ? "0" : ""}${TimeOfDay.now().minute}",
                                   onSelected: (String time) {
-                                    //
+                                    selectedTime = time;
                                   },
                                 ),
                               )
@@ -318,6 +342,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                               Flexible(
                                 child: LabelTextFieldWidget(
                                   label: "",
+                                  hintText: "Add a note",
                                   controller: notesController,
                                   isRequired: false,
                                   textInputType: TextInputType.text,
@@ -325,7 +350,61 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 100),
+                          const SizedBox(height: 25),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  resetVariables();
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                                  width: 140,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.grey,
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      'Cancel',
+                                      style: GoogleFonts.inter(
+                                        fontSize: 18,
+                                        color: AppColors.textwhite,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              GestureDetector(
+                                onTap: () {
+                                  addMeasurement();
+                                },
+                                child: Container(
+                                  width: 140,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue,
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      'Save',
+                                      style: GoogleFonts.inter(
+                                        fontSize: 18,
+                                        color: AppColors.textwhite,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 25),
                         ],
                         if (measurementTypeController.text == "") ...[
                           const SizedBox(height: 485),
@@ -338,5 +417,25 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> addMeasurement() async {
+    // DocumentReference measurementDocument;
+    // FirebaseFirestore.instance.runTransaction((transaction) async {
+    //   try {
+    //     measurementDocument =
+    //         FirebaseFirestore.instance.collection('measurement').doc();
+    //     transaction.set(measurementDocument, {
+    //       'docId': measurementDocument.id,
+    //       'type': measurementTypeController.text,
+    //       'readingDate': selectedDate,
+    //       'readingTime': selectedTime,
+    //       'meals': mealsController.text,
+    //       'notes': notesController.text
+    //     });
+    //   } catch (e) {
+    //     print("Add Measurement - Unable to add measurement - $e");
+    //   }
+    // });
   }
 }
