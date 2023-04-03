@@ -1,16 +1,22 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vitalrpm/const/color_const.dart';
+import 'package:intl/intl.dart';
 
-class MeasurementScreen extends StatefulWidget {
-  const MeasurementScreen({Key? key}) : super(key: key);
+class MeasurementHistoryScreen extends StatefulWidget {
+  const MeasurementHistoryScreen({Key? key, required this.type})
+      : super(key: key);
+
+  final String type;
 
   @override
-  State<MeasurementScreen> createState() => _MeasurementScreenState();
+  State<MeasurementHistoryScreen> createState() =>
+      _MeasurementHistoryScreenState();
 }
 
-class _MeasurementScreenState extends State<MeasurementScreen> {
+class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
   final iconList = <IconData>[
     Icons.home_outlined,
     Icons.assessment_outlined,
@@ -20,12 +26,73 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
 
   var bottomNavIndex = 1;
 
+  List<Map<String, dynamic>> measurementList = [];
+
+  @override
+  void initState() {
+    initialize();
+    super.initState();
+  }
+
+  var lastReading = '';
+
+  void initialize() async {
+    measurementList = await getMeasurementsByType(widget.type);
+    lastReading = getLastReading();
+    setState(() {});
+  }
+
+  getLastReading() {
+    if (measurementList.isNotEmpty) {
+      final measurement = measurementList.first;
+      final date = DateTime.parse(measurement['date']);
+      final time = DateTime.parse("2023-04-27 ${measurement['time']}:00");
+      final timestamp =
+          DateTime(date.year, date.month, date.day, time.hour, time.minute);
+      final diff = DateTime.now().difference(timestamp);
+      final duration = Duration(seconds: diff.inSeconds);
+      final lastReading = 'Last Reading - ${_getTimeAgo(duration)} ago';
+      return lastReading;
+    }
+    return 'N/A';
+  }
+
+  getMeasurementsByType(String type) async {
+    final db = FirebaseFirestore.instance;
+    final measurementsRef = db.collection('measurements');
+    final measurements = <Map<String, dynamic>>[];
+    final snapshot = await measurementsRef
+        .where('type', isEqualTo: type)
+        .orderBy('date', descending: true)
+        .orderBy('time', descending: true)
+        .get();
+    if (snapshot.docs.isNotEmpty) {
+      for (final measurement in snapshot.docs) {
+        measurements.add(measurement.data());
+      }
+    }
+    return measurements;
+  }
+
+  String _getTimeAgo(Duration duration) {
+    if (duration.inSeconds < 60) {
+      return '${duration.inSeconds} seconds';
+    } else if (duration.inMinutes < 60) {
+      return '${duration.inMinutes} minutes';
+    } else if (duration.inHours < 24) {
+      return '${duration.inHours} hours';
+    } else if (duration.inDays < 30) {
+      return '${duration.inDays} days';
+    }
+    return '${duration.inDays} days';
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       extendBody: true, // very important as noted
-      backgroundColor: AppColors.darkBlue,
+      backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.blue,
         onPressed: (() => {}),
@@ -58,8 +125,10 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 165,
+              Container(
+                height: 185,
+                color: AppColors.darkBlue,
+                width: screenWidth,
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -85,17 +154,18 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
-                              'Blood Pressure',
+                              widget.type,
                               style: GoogleFonts.inter(
                                 fontSize: 26,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
+                            SizedBox(height: 5),
                             Text(
-                              'Last Reading - 5 hours ago',
+                              lastReading,
                               style: GoogleFonts.inter(
-                                fontSize: 14,
+                                fontSize: 16,
                                 color: AppColors.textgrey,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -124,7 +194,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
                         child: Text(
                           'Measurement History',
                           style: GoogleFonts.inter(
-                            fontSize: 21,
+                            fontSize: 18,
                             color: AppColors.textblack,
                             fontWeight: FontWeight.w600,
                           ),
@@ -135,8 +205,9 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
                         child: ListView.builder(
                           shrinkWrap: true,
                           primary: false,
-                          itemCount: 5,
+                          itemCount: measurementList.length,
                           itemBuilder: (context, index) {
+                            final measurement = measurementList[index];
                             return Container(
                               margin: const EdgeInsets.only(top: 10),
                               decoration: BoxDecoration(
@@ -153,7 +224,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
                                         offset: Offset(0, 20),
                                         blurRadius: 10)
                                   ]),
-                              height: 105,
+                              height: 115,
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 15, vertical: 10),
@@ -170,18 +241,20 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
                                               MainAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Jan 11, 2022',
+                                              DateFormat.yMMMd().format(
+                                                  DateTime.parse(
+                                                      measurement['date'])),
                                               style: GoogleFonts.inter(
-                                                fontSize: 15,
+                                                fontSize: 16,
                                                 color: const Color(0XFF565555),
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
                                             const SizedBox(width: 20),
                                             Text(
-                                              '06.31 pm',
+                                              measurement['time'],
                                               style: GoogleFonts.inter(
-                                                fontSize: 15,
+                                                fontSize: 16,
                                                 color: const Color(0XFF565555),
                                                 fontWeight: FontWeight.w400,
                                               ),
@@ -197,69 +270,109 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
                                     ),
                                     const SizedBox(height: 5),
                                     Divider(
-                                      height: 1,
+                                      thickness: 1,
                                       color: AppColors.grey,
                                     ),
-                                    const SizedBox(height: 10),
+                                    const SizedBox(height: 5),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Systolic',
-                                                  style: GoogleFonts.inter(
-                                                    fontSize: 15,
-                                                    color:
-                                                        const Color(0XFF565555),
-                                                    fontWeight: FontWeight.w400,
+                                        if (widget.type ==
+                                            "Blood Pressure") ...[
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Systolic',
+                                                    style: GoogleFonts.inter(
+                                                      fontSize: 15,
+                                                      color: const Color(
+                                                          0XFF565555),
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
                                                   ),
-                                                ),
-                                                Text(
-                                                  '120 mmgH',
-                                                  style: GoogleFonts.inter(
-                                                    fontSize: 17,
-                                                    color: AppColors.darkBlue,
-                                                    fontWeight: FontWeight.w600,
+                                                  Text(
+                                                    '${measurement['reading']['systolic']} ${measurement['unit']}',
+                                                    style: GoogleFonts.inter(
+                                                      fontSize: 17,
+                                                      color: AppColors.darkBlue,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(width: 20),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Diastolic',
-                                                  style: GoogleFonts.inter(
-                                                    fontSize: 15,
-                                                    color:
-                                                        const Color(0XFF565555),
-                                                    fontWeight: FontWeight.w400,
+                                                ],
+                                              ),
+                                              const SizedBox(width: 20),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Diastolic',
+                                                    style: GoogleFonts.inter(
+                                                      fontSize: 15,
+                                                      color: const Color(
+                                                          0XFF565555),
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
                                                   ),
-                                                ),
-                                                Text(
-                                                  '80 mmgH',
-                                                  style: GoogleFonts.inter(
-                                                    fontSize: 17,
-                                                    color: AppColors.darkBlue,
-                                                    fontWeight: FontWeight.w600,
+                                                  Text(
+                                                    '${measurement['reading']['diastolic']} ${measurement['unit']}',
+                                                    style: GoogleFonts.inter(
+                                                      fontSize: 17,
+                                                      color: AppColors.darkBlue,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ] else ...[
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Reading',
+                                                    style: GoogleFonts.inter(
+                                                      fontSize: 15,
+                                                      color: const Color(
+                                                          0XFF565555),
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    '${measurement['reading']} ${measurement['unit']}',
+                                                    style: GoogleFonts.inter(
+                                                      fontSize: 17,
+                                                      color: AppColors.darkBlue,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                        // TODO - WORK ON & ADD BELOW CODE WHEN VITAL RANGE DECIDED
                                         Container(
                                           height: 30,
                                           padding: const EdgeInsets.symmetric(
@@ -286,7 +399,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
                           },
                         ),
                       ),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 260),
                     ]),
               ),
             ]),
