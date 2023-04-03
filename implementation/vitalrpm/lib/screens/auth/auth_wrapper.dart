@@ -6,7 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/providers/user_provider.dart';
 import 'package:vitalrpm/screens/auth/login_screen.dart';
-import 'package:vitalrpm/screens/home_dashboard.dart';
+import 'package:vitalrpm/screens/doctor_home.dart';
+import 'package:vitalrpm/screens/patient_home.dart';
 
 class AuthenticationWrapper extends StatefulWidget {
   const AuthenticationWrapper({Key? key}) : super(key: key);
@@ -31,29 +32,35 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
   Future<void> initialize() async {
     if (mounted) {
       Future.delayed(Duration.zero, () {
-        return goToHome();
-
-        // if (firebaseUser != null) {
-        //   userProvider.initialize(firebaseUser.uid, context);
-        //   return goToHome();
-        // } else {
-        //   return goToLogin();
-        // }
+        // return goToHome();
+        if (firebaseUser != null) {
+          userProvider.initialize(firebaseUser.uid, context);
+          String type = userProvider.loginUser.userType.toLowerCase();
+          return goToHome(type);
+        } else {
+          return goToLogin();
+        }
       });
     }
   }
 
-  // Future<void> checkFirstSeen(BuildContext context, firebaseUser) async {
-  //
-  // }
-
-  goToHome() {
-    return Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const HomeDashboard(),
-      ),
-    );
+  goToHome(String type) {
+    print(type);
+    if (type == "doctor") {
+      return Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const DoctorHomeDashboard(),
+        ),
+      );
+    } else {
+      return Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const PatientHomeDashboard(),
+        ),
+      );
+    }
   }
 
   goToLogin() {

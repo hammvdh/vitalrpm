@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,15 +12,15 @@ import 'package:vitalrpm/screens/measurement/measurement_history_screen.dart';
 import '../app_localizations.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 
-class HomeDashboard extends StatefulWidget {
-  const HomeDashboard({Key? key}) : super(key: key);
+class PatientHomeDashboard extends StatefulWidget {
+  const PatientHomeDashboard({Key? key}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _HomeDashboardState createState() => _HomeDashboardState();
+  _PatientHomeDashboardState createState() => _PatientHomeDashboardState();
 }
 
-class _HomeDashboardState extends State<HomeDashboard> {
+class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
   late AppLocalizations local;
   double screenWidth = 0;
 
@@ -257,7 +256,9 @@ class _HomeDashboardState extends State<HomeDashboard> {
                                     context,
                                     CupertinoPageRoute(
                                       builder: (context) =>
-                                          const MeasurementScreen(),
+                                          MeasurementHistoryScreen(
+                                        type: item['type'],
+                                      ),
                                     ),
                                   );
                                 },

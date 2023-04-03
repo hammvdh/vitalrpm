@@ -1,3 +1,4 @@
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,11 +21,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   late UserProvider userProvider;
 
+  final userTypeController = TextEditingController();
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
-
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
+  bool _obscureText = true;
 
   @override
   void initState() {
@@ -97,6 +100,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
+                      const SizedBox(height: 10.0),
+                      RichText(
+                        text: TextSpan(
+                          text: 'Registering as',
+                          style: GoogleFonts.inter(
+                            color: Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: ' *',
+                              style: GoogleFonts.inter(
+                                color: Colors.red,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10.0),
+                      CustomDropdown(
+                        hintText: 'Patient or Doctor?',
+                        items: const ['Patient', 'Doctor'],
+                        controller: userTypeController,
+                        excludeSelected: false,
+                        onChanged: (item) {},
+                        fillColor: const Color(0XFFEDEAEA),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
                       const SizedBox(height: 20.0),
                       RichText(
                         text: TextSpan(
@@ -304,6 +338,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           child: Center(
                             child: TextFormField(
                               controller: passwordController,
+                              obscureText: _obscureText,
+
                               textInputAction: TextInputAction.done,
                               validator: (input) {
                                 if (input!.length < 6) {
@@ -324,8 +360,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   color: Colors.grey,
                                   fontWeight: FontWeight.w400,
                                 ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscureText
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                  ),
+                                  color: Colors.black87,
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscureText = !_obscureText;
+                                    });
+                                  },
+                                ),
                               ),
-                              obscureText: true,
                             ),
                           ),
                         ),
@@ -412,11 +460,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
             password: passwordController.text.trim());
     // var userId = userCredential.user?.uid;
     userProvider.createUser(
-      userCredential.user?.uid,
-      emailController.text.trim(),
-      firstNameController.text.trim(),
-      lastNameController.text.trim(),
-    );
+        userCredential.user?.uid,
+        emailController.text.trim(),
+        firstNameController.text.trim(),
+        lastNameController.text.trim(),
+        userTypeController.text.trim());
     LoadingOverlay.of(context).hide();
     Navigator.pushReplacement(
       context,
