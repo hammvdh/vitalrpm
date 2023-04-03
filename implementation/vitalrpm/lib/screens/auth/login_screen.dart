@@ -23,6 +23,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
+  bool _obscureText = true;
+
   @override
   void initState() {
     userProvider = context.read<UserProvider>();
@@ -194,8 +196,21 @@ class _LoginScreenState extends State<LoginScreen> {
                                   color: Colors.grey,
                                   fontWeight: FontWeight.w400,
                                 ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscureText
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                  ),
+                                  color: Colors.black87,
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscureText = !_obscureText;
+                                    });
+                                  },
+                                ),
                               ),
-                              obscureText: true,
+                              obscureText: _obscureText,
                             ),
                           ),
                         ),
