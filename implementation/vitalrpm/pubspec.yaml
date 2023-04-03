@@ -37,6 +37,7 @@ dependencies:
   shared_preferences: ^2.0.17
   animated_bottom_navigation_bar: ^1.1.0+1
   animated_custom_dropdown: 1.4.0
+  uuid: ^3.0.7
 
 dev_dependencies:
   flutter_test:
