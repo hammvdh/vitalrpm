@@ -450,7 +450,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Future<void> register() async {
+  void register() async {
     print(
         '-------------------- Registration in Progress -----------------------');
     LoadingOverlay.of(context).show();
@@ -459,14 +459,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
             email: emailController.text.trim(),
             password: passwordController.text.trim());
     // var userId = userCredential.user?.uid;
-    userProvider.createUser(
-        userCredential.user?.uid,
-        emailController.text.trim(),
-        firstNameController.text.trim(),
-        lastNameController.text.trim(),
-        userTypeController.text.trim());
+    await userProvider.createUser(
+      userCredential.user?.uid,
+      emailController.text.trim(),
+      firstNameController.text.trim(),
+      lastNameController.text.trim(),
+      userTypeController.text.trim(),
+    );
     LoadingOverlay.of(context).hide();
-    Navigator.pushReplacement(
+    await Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => const AuthenticationWrapper(),

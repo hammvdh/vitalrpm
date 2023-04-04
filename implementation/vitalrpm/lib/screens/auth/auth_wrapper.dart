@@ -31,10 +31,10 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
 
   Future<void> initialize() async {
     if (mounted) {
-      Future.delayed(Duration.zero, () {
+      Future.delayed(Duration.zero, () async {
         // return goToHome();
         if (firebaseUser != null) {
-          userProvider.initialize(firebaseUser.uid, context);
+          await userProvider.loadUser(firebaseUser.uid);
           String type = userProvider.loginUser.userType.toLowerCase();
           return goToHome(type);
         } else {

@@ -156,7 +156,7 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Hello Hammadh',
+                              'Hello ${userProvider.loginUser.firstName}',
                               style: GoogleFonts.inter(
                                 fontSize: 18,
                                 color: AppColors.darkBlue,

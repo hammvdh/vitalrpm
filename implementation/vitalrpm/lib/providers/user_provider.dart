@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 // import 'package:uuid/uuid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,48 +5,45 @@ import 'package:flutter/material.dart';
 import 'package:vitalrpm/models/user_model.dart';
 
 class UserProvider extends ChangeNotifier {
-  UserModel loginUser = UserModel();
+  late UserModel loginUser;
   late final FirebaseAuth firebaseAuth;
 
-  void initialize(userId, BuildContext context) async {
-    await loadUser(userId, context);
-  }
+  // initialize(userId) async {
+  //   await loadUser(userId);
+  // }
 
   Future<void> createUser(userId, email, firstname, lastname, userType) async {
     DocumentReference userMasterDocument;
+    final user = UserModel();
     FirebaseFirestore.instance.runTransaction((transaction) async {
       try {
-        // // Generate a unique user ID
-        // final uuid = Uuid();
-        // final userId = uuid.v4();
-
-        loginUser = UserModel();
         userMasterDocument =
             FirebaseFirestore.instance.collection('usermaster').doc();
-        loginUser.documentId = userMasterDocument.id;
-        loginUser.userId = userId;
-        loginUser.email = email!;
-        loginUser.firstName = firstname!;
-        loginUser.lastName = lastname!;
-        loginUser.userType = userType!;
+        user.documentId = userMasterDocument.id;
+        user.userId = userId;
+        user.email = email!;
+        user.firstName = firstname!;
+        user.lastName = lastname!;
+        user.userType = userType!;
         transaction.set(userMasterDocument, {
-          'docId': loginUser.documentId,
-          'userId': loginUser.userId,
-          'emailAddress': loginUser.email,
-          'firstName': loginUser.firstName,
-          'lastName': loginUser.lastName,
+          'docId': user.documentId,
+          'userId': user.userId,
+          'emailAddress': user.email,
+          'firstName': user.firstName,
+          'lastName': user.lastName,
           'country': 'Sri Lanka',
-          'mobileNo': loginUser.mobileNo,
-          'address': loginUser.address,
+          'mobileNo': user.mobileNo,
+          'address': user.address,
           'dateOfReg': Timestamp.now(),
           'lastUpdated': Timestamp.now(),
-          'usertype': loginUser.userType,
-          'genderId': loginUser.genderId
+          'usertype': user.userType,
+          'genderId': user.genderId
         });
       } catch (e) {
         print("RegisterAPI - Create User Error - $e");
       }
     });
+    print(user);
   }
 
   Future<void> login(emailController, passwordController) async {
@@ -66,25 +61,25 @@ class UserProvider extends ChangeNotifier {
     await FirebaseAuth.instance.signOut();
   }
 
-  Future<void> loadUser(String userID, BuildContext context) async {
+  Future<void> loadUser(String userID) async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('usermaster')
         .where('userId', isEqualTo: userID)
         .get();
 
     DocumentSnapshot userDoc = snapshot.docs.first;
-    if (!userDoc.exists) return Navigator.pop(context);
-    loginUser = UserModel();
-    loginUser.userId = userID;
-    loginUser.documentId = userDoc.get('docId');
-    loginUser.email = userDoc.get('emailAddress');
-    loginUser.firstName = userDoc.get('firstName');
-    loginUser.lastName = userDoc.get('lastName');
-    loginUser.address = userDoc.get('address');
-    loginUser.country = userDoc.get('country');
-    loginUser.mobileNo = userDoc.get('mobileNo');
-    loginUser.userType = userDoc.get('usertype');
-    print('User Logged In - ${loginUser.userType.trim()}');
+    final user = UserModel();
+    user.userId = userID;
+    user.documentId = userDoc.get('docId');
+    user.email = userDoc.get('emailAddress');
+    user.firstName = userDoc.get('firstName');
+    user.lastName = userDoc.get('lastName');
+    user.address = userDoc.get('address');
+    user.country = userDoc.get('country');
+    user.mobileNo = userDoc.get('mobileNo');
+    user.userType = userDoc.get('usertype');
+    print('User Logged In - ${user.userType.trim()}');
+    loginUser = user;
     notifyListeners();
   }
 

@@ -17,7 +17,7 @@ class UserModel {
   UserModel({
     this.documentId = "",
     this.userId = "",
-    this.userType = "P",
+    this.userType = "Patient",
     this.firstName = "",
     this.lastName = "",
     this.email = "",
