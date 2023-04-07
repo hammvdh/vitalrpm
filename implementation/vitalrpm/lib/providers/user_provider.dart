@@ -1,22 +1,21 @@
-// import 'package:uuid/uuid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import 'package:vitalrpm/models/user_model.dart';
 
 class UserProvider extends ChangeNotifier {
   late UserModel loginUser;
   late final FirebaseAuth firebaseAuth;
 
-  // initialize(userId) async {
-  //   await loadUser(userId);
-  // }
-
   Future<void> createUser(userId, email, firstname, lastname, userType) async {
     DocumentReference userMasterDocument;
     final user = UserModel();
+
     FirebaseFirestore.instance.runTransaction((transaction) async {
       try {
+        const uuid = Uuid();
+        final doctorId = uuid.v4();
         userMasterDocument =
             FirebaseFirestore.instance.collection('usermaster').doc();
         user.documentId = userMasterDocument.id;
@@ -37,13 +36,14 @@ class UserProvider extends ChangeNotifier {
           'dateOfReg': Timestamp.now(),
           'lastUpdated': Timestamp.now(),
           'usertype': user.userType,
-          'genderId': user.genderId
+          'genderId': user.genderId,
+          'doctorId': userType.toLowerCase() == "doctor" ? doctorId : 'N/A',
+          'doctor': userType.toLowerCase() != "doctor" ? '' : 'N/A'
         });
       } catch (e) {
         print("RegisterAPI - Create User Error - $e");
       }
     });
-    print(user);
   }
 
   Future<void> login(emailController, passwordController) async {
@@ -78,6 +78,8 @@ class UserProvider extends ChangeNotifier {
     user.country = userDoc.get('country');
     user.mobileNo = userDoc.get('mobileNo');
     user.userType = userDoc.get('usertype');
+    user.doctor = userDoc.get('doctor');
+    user.doctorId = userDoc.get('doctorId');
     print('User Logged In - ${user.userType.trim()}');
     loginUser = user;
     notifyListeners();

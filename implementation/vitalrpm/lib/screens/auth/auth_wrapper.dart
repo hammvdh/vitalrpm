@@ -6,8 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/providers/user_provider.dart';
 import 'package:vitalrpm/screens/auth/login_screen.dart';
-import 'package:vitalrpm/screens/doctor_home.dart';
-import 'package:vitalrpm/screens/patient_home.dart';
+import 'package:vitalrpm/screens/doctor/doctor_home.dart';
+import 'package:vitalrpm/screens/patient/patient_home.dart';
 
 class AuthenticationWrapper extends StatefulWidget {
   const AuthenticationWrapper({Key? key}) : super(key: key);

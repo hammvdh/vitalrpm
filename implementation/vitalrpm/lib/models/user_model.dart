@@ -13,6 +13,8 @@ class UserModel {
   String country;
   String? address;
   Timestamp? registrationDate;
+  String? doctor;
+  String? doctorId;
 
   UserModel({
     this.documentId = "",

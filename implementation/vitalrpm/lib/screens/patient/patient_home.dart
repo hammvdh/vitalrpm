@@ -7,10 +7,10 @@ import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/const/measurement_types.dart';
 import 'package:vitalrpm/providers/user_provider.dart';
 import 'package:vitalrpm/screens/auth/auth_wrapper.dart';
-import 'package:vitalrpm/screens/measurement/add_measurement_screen.dart';
-import 'package:vitalrpm/screens/measurement/measurement_history_screen.dart';
-import '../app_localizations.dart';
+import 'package:vitalrpm/screens/patient/measurement/add_measurement_screen.dart';
+import '../../app_localizations.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import './measurement/measurement_history_screen.dart';
 
 class PatientHomeDashboard extends StatefulWidget {
   const PatientHomeDashboard({Key? key}) : super(key: key);

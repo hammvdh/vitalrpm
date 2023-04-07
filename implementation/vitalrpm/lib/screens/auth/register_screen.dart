@@ -453,7 +453,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void register() async {
     print(
         '-------------------- Registration in Progress -----------------------');
-    LoadingOverlay.of(context).show();
     UserCredential userCredential = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(
             email: emailController.text.trim(),
@@ -466,7 +465,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       lastNameController.text.trim(),
       userTypeController.text.trim(),
     );
-    LoadingOverlay.of(context).hide();
     await Navigator.pushReplacement(
       context,
       MaterialPageRoute(
