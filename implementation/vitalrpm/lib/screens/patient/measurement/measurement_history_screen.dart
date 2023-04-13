@@ -1,9 +1,12 @@
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:vitalrpm/const/color_const.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
+import 'package:vitalrpm/providers/user_provider.dart';
+import 'package:vitalrpm/screens/patient/measurement/add_measurement_screen.dart';
 
 class MeasurementHistoryScreen extends StatefulWidget {
   const MeasurementHistoryScreen({Key? key, required this.type})
@@ -17,19 +20,11 @@ class MeasurementHistoryScreen extends StatefulWidget {
 }
 
 class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
-  final iconList = <IconData>[
-    Icons.home_outlined,
-    Icons.assessment_outlined,
-    Icons.person_outlined,
-    Icons.settings_outlined,
-  ];
-
-  var bottomNavIndex = 1;
-
   List<Map<String, dynamic>> measurementList = [];
-
+  late UserProvider userProvider;
   @override
   void initState() {
+    userProvider = context.read<UserProvider>();
     initialize();
     super.initState();
   }
@@ -54,7 +49,7 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
       final lastReading = 'Last Reading - ${_getTimeAgo(duration)} ago';
       return lastReading;
     }
-    return 'N/A';
+    return 'Last Reading - None Taken';
   }
 
   getMeasurementsByType(String type) async {
@@ -62,6 +57,7 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
     final measurementsRef = db.collection('measurements');
     final measurements = <Map<String, dynamic>>[];
     final snapshot = await measurementsRef
+        .where('patientId', isEqualTo: userProvider.loginUser.documentId)
         .where('type', isEqualTo: type)
         .orderBy('date', descending: true)
         .orderBy('time', descending: true)
@@ -95,30 +91,23 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.blue,
-        onPressed: (() => {}),
+        onPressed: (() => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddMeasurementScreen(
+                    type: widget.type,
+                  ),
+                ),
+              ).then((value) => {initialize()})
+            }),
         child: const Icon(
           Icons.add,
           color: Colors.white,
           size: 30,
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: Container(
-        color: Colors.white,
-        child: AnimatedBottomNavigationBar(
-          elevation: 10,
-          backgroundColor: Colors.white,
-          icons: iconList,
-          iconSize: 30,
-          activeIndex: bottomNavIndex,
-          activeColor: AppColors.darkBlue,
-          inactiveColor: AppColors.grey,
-          gapLocation: GapLocation.center,
-          notchSmoothness: NotchSmoothness.softEdge,
-          onTap: (index) => setState(() => bottomNavIndex = index),
-          //other params
-        ),
-      ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: SafeArea(
           child: SingleChildScrollView(
         child: Column(
@@ -194,212 +183,226 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
                         child: Text(
                           'Measurement History',
                           style: GoogleFonts.inter(
-                            fontSize: 18,
+                            fontSize: 20,
                             color: AppColors.textblack,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          primary: false,
-                          itemCount: measurementList.length,
-                          itemBuilder: (context, index) {
-                            final measurement = measurementList[index];
-                            return Container(
-                              margin: const EdgeInsets.only(top: 10),
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                    width: 1,
-                                    color: const Color(0xFFF0EFF2)
-                                        .withOpacity(0.8),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.white,
-                                  boxShadow: const [
-                                    BoxShadow(
-                                        color: Color(0xFFDEE2E5),
-                                        offset: Offset(0, 20),
-                                        blurRadius: 10)
-                                  ]),
-                              height: 115,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 10),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              DateFormat.yMMMd().format(
-                                                  DateTime.parse(
-                                                      measurement['date'])),
-                                              style: GoogleFonts.inter(
-                                                fontSize: 16,
-                                                color: const Color(0XFF565555),
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 20),
-                                            Text(
-                                              measurement['time'],
-                                              style: GoogleFonts.inter(
-                                                fontSize: 16,
-                                                color: const Color(0XFF565555),
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Icon(
-                                          Icons.chevron_right,
-                                          color: AppColors.darkBlue,
-                                          size: 21,
-                                        )
-                                      ],
+                      if (measurementList.isEmpty) ...[
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 15),
+                          child: Text("No Readings Found."),
+                        )
+                      ] else ...[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            primary: false,
+                            itemCount: measurementList.length,
+                            itemBuilder: (context, index) {
+                              final measurement = measurementList[index];
+                              return Container(
+                                margin: const EdgeInsets.only(top: 10),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                      width: 1,
+                                      color: Color(0xFFD4D3D4).withOpacity(0.8),
                                     ),
-                                    const SizedBox(height: 5),
-                                    Divider(
-                                      thickness: 1,
-                                      color: AppColors.grey,
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        if (widget.type ==
-                                            "Blood Pressure") ...[
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.white,
+                                    boxShadow: const [
+                                      BoxShadow(
+                                          color: Color(0xFFDEE2E5),
+                                          offset: Offset(0, 20),
+                                          blurRadius: 10)
+                                    ]),
+                                height: 115,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 10),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
                                           Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                                MainAxisAlignment.start,
                                             children: [
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    'Systolic',
-                                                    style: GoogleFonts.inter(
-                                                      fontSize: 15,
-                                                      color: const Color(
-                                                          0XFF565555),
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    '${measurement['reading']['systolic']} ${measurement['unit']}',
-                                                    style: GoogleFonts.inter(
-                                                      fontSize: 17,
-                                                      color: AppColors.darkBlue,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                ],
+                                              Text(
+                                                DateFormat.yMMMd().format(
+                                                    DateTime.parse(
+                                                        measurement['date'])),
+                                                style: GoogleFonts.inter(
+                                                  fontSize: 16,
+                                                  color:
+                                                      const Color(0XFF565555),
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                               ),
                                               const SizedBox(width: 20),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    'Diastolic',
-                                                    style: GoogleFonts.inter(
-                                                      fontSize: 15,
-                                                      color: const Color(
-                                                          0XFF565555),
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    '${measurement['reading']['diastolic']} ${measurement['unit']}',
-                                                    style: GoogleFonts.inter(
-                                                      fontSize: 17,
-                                                      color: AppColors.darkBlue,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                ],
+                                              Text(
+                                                measurement['time'],
+                                                style: GoogleFonts.inter(
+                                                  fontSize: 16,
+                                                  color:
+                                                      const Color(0XFF565555),
+                                                  fontWeight: FontWeight.w400,
+                                                ),
                                               ),
                                             ],
                                           ),
-                                        ] else ...[
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    'Reading',
-                                                    style: GoogleFonts.inter(
-                                                      fontSize: 15,
-                                                      color: const Color(
-                                                          0XFF565555),
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    '${measurement['reading']} ${measurement['unit']}',
-                                                    style: GoogleFonts.inter(
-                                                      fontSize: 17,
-                                                      color: AppColors.darkBlue,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
+                                          const SizedBox()
+                                          // Icon(
+                                          //   Icons.chevron_right,
+                                          //   color: AppColors.darkBlue,
+                                          //   size: 21,
+                                          // )
                                         ],
-                                        // TODO - WORK ON & ADD BELOW CODE WHEN VITAL RANGE DECIDED
-                                        Container(
-                                          height: 30,
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 5),
-                                          decoration: BoxDecoration(
-                                              color: AppColors.blue,
-                                              borderRadius:
-                                                  BorderRadius.circular(5)),
-                                          child: Text(
-                                            'Normal'.toUpperCase(),
-                                            style: GoogleFonts.inter(
-                                              fontSize: 15,
-                                              color: AppColors.textwhite,
-                                              fontWeight: FontWeight.w600,
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Divider(
+                                        thickness: 1,
+                                        color:
+                                            Color(0xFFD4D3D4).withOpacity(0.8),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          if (widget.type ==
+                                              "Blood Pressure") ...[
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      'Systolic',
+                                                      style: GoogleFonts.inter(
+                                                        fontSize: 15,
+                                                        color: const Color(
+                                                            0XFF565555),
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      '${measurement['reading']['systolic']} ${measurement['unit']}',
+                                                      style: GoogleFonts.inter(
+                                                        fontSize: 17,
+                                                        color:
+                                                            AppColors.darkBlue,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(width: 20),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      'Diastolic',
+                                                      style: GoogleFonts.inter(
+                                                        fontSize: 15,
+                                                        color: const Color(
+                                                            0XFF565555),
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      '${measurement['reading']['diastolic']} ${measurement['unit']}',
+                                                      style: GoogleFonts.inter(
+                                                        fontSize: 17,
+                                                        color:
+                                                            AppColors.darkBlue,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
                                             ),
-                                          ),
-                                        )
-                                      ],
-                                    )
-                                  ],
+                                          ] else ...[
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      'Reading',
+                                                      style: GoogleFonts.inter(
+                                                        fontSize: 15,
+                                                        color: const Color(
+                                                            0XFF565555),
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      '${measurement['reading']} ${measurement['unit']}',
+                                                      style: GoogleFonts.inter(
+                                                        fontSize: 17,
+                                                        color:
+                                                            AppColors.darkBlue,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                          // TODO - WORK ON & ADD BELOW CODE WHEN VITAL RANGE DECIDED
+                                          Container(
+                                            height: 30,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 5),
+                                            decoration: BoxDecoration(
+                                                color: AppColors.blue,
+                                                borderRadius:
+                                                    BorderRadius.circular(5)),
+                                            child: Text(
+                                              'Normal'.toUpperCase(),
+                                              style: GoogleFonts.inter(
+                                                fontSize: 15,
+                                                color: AppColors.textwhite,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 260),
+                        const SizedBox(height: 260),
+                      ]
                     ]),
               ),
             ]),

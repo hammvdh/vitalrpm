@@ -10,6 +10,9 @@ class ViewAssessmentsScreen extends StatefulWidget {
 class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
   @override
   Widget build(BuildContext context) {
+    // Top Bar
+    // Assessment Details
+    // List of vital signs used
     return Container();
   }
 }

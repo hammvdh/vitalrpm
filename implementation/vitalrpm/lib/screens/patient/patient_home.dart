@@ -8,6 +8,7 @@ import 'package:vitalrpm/const/measurement_types.dart';
 import 'package:vitalrpm/providers/user_provider.dart';
 import 'package:vitalrpm/screens/auth/auth_wrapper.dart';
 import 'package:vitalrpm/screens/patient/measurement/add_measurement_screen.dart';
+import 'package:vitalrpm/widgets/bottom_navbar_widget.dart';
 import '../../app_localizations.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import './measurement/measurement_history_screen.dart';
@@ -39,6 +40,8 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
     setState(() {});
   }
 
+  final list = [];
+
   final iconList = <IconData>[
     Icons.home_outlined,
     Icons.assessment_outlined,
@@ -56,6 +59,7 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
     final lastMeasurements = <Map<String, dynamic>>[];
     for (String type in measurementTypes) {
       final snapshot = await measurementsRef
+          .where('patientId', isEqualTo: userProvider.loginUser.documentId)
           .where('type', isEqualTo: type)
           .orderBy('date', descending: true)
           .orderBy('time', descending: true)
@@ -72,6 +76,9 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
         final lastReading = 'Last Reading - ${_getTimeAgo(duration)} ago';
         lastMeasurement['lastReading'] = lastReading;
         lastMeasurements.add(lastMeasurement);
+      } else {
+        lastMeasurements
+            .add({'type': type, 'lastReading': 'Last Reading - N/A'});
       }
     }
     return lastMeasurements;
@@ -101,7 +108,7 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
       },
       child: Scaffold(
         extendBody: true, // very important as noted
-        backgroundColor: AppColors.darkBlue,
+        // backgroundColor: AppColors.darkBlue,
         floatingActionButton: FloatingActionButton(
           backgroundColor: AppColors.blue,
           onPressed: (() => {
@@ -119,22 +126,7 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        bottomNavigationBar: Container(
-          color: Colors.white,
-          child: AnimatedBottomNavigationBar(
-            elevation: 10,
-            backgroundColor: Colors.white,
-            icons: iconList,
-            iconSize: 30,
-            activeIndex: bottomNavIndex,
-            activeColor: AppColors.darkBlue,
-            inactiveColor: AppColors.grey,
-            gapLocation: GapLocation.center,
-            notchSmoothness: NotchSmoothness.softEdge,
-            onTap: (index) => setState(() => bottomNavIndex = index),
-            //other params
-          ),
-        ),
+        bottomNavigationBar: const CustomBottomNavigationBar(currentPage: 0),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Stack(
@@ -199,7 +191,7 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                               child: Image(
                                 width: MediaQuery.of(context).size.width,
                                 image: const AssetImage(
-                                    'assets/images/account.png'),
+                                    'assets/images/profile_avatar.png'),
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -223,6 +215,15 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Container(
+                        //   width: screenWidth,
+                        //   height: 200,
+                        //   margin: const EdgeInsets.symmetric(
+                        //       horizontal: 10, vertical: 10),
+                        //   decoration: BoxDecoration(
+                        //       color: AppColors.darkBlue,
+                        //       borderRadius: BorderRadius.circular(10)),
+                        // ),
                         const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -249,6 +250,8 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                             primary: false,
                             itemCount: measurementList.length,
                             itemBuilder: (context, index) {
+                              final type =
+                                  MeasurementTypes.measurementTypes[index];
                               final item = measurementList[index];
                               return GestureDetector(
                                 onTap: () {
@@ -257,7 +260,7 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                                     CupertinoPageRoute(
                                       builder: (context) =>
                                           MeasurementHistoryScreen(
-                                        type: item['type'],
+                                        type: type.toString(),
                                       ),
                                     ),
                                   );
@@ -267,7 +270,7 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                                   decoration: BoxDecoration(
                                       border: Border.all(
                                         width: 1,
-                                        color: const Color(0xFFF0EFF2)
+                                        color: const Color(0xFFD4D3D4)
                                             .withOpacity(0.8),
                                       ),
                                       borderRadius: BorderRadius.circular(10),
@@ -311,9 +314,12 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                                               ),
                                             ),
                                             Text(
-                                              item['type'] == "Blood Pressure"
-                                                  ? '${item['reading']['systolic']}/${item['reading']['diastolic']} (${item['unit']})'
-                                                  : '${item['reading']} (${item['unit']})',
+                                              item['reading'] != null
+                                                  ? (item['type'] ==
+                                                          "Blood Pressure"
+                                                      ? '${item['reading']['systolic']}/${item['reading']['diastolic']} (${item['unit']})'
+                                                      : '${item['reading']} (${item['unit']})')
+                                                  : "N/A",
                                               style: GoogleFonts.inter(
                                                 fontSize: 18,
                                                 color: AppColors.blue,
@@ -346,6 +352,7 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                           ),
                         ),
                         const SizedBox(height: 50),
+
                         // Row(
                         //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         //   crossAxisAlignment: CrossAxisAlignment.center,

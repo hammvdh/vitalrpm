@@ -89,7 +89,7 @@ class _LabelTextFieldWidgetState extends State<LabelTextFieldWidget> {
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
-                borderSide: BorderSide.none,
+                borderSide: BorderSide(color: Colors.red, width: 1),
               ),
               focusedErrorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
@@ -101,7 +101,7 @@ class _LabelTextFieldWidgetState extends State<LabelTextFieldWidget> {
             validator: (text) {
               if (widget.isRequired) {
                 if (text == null || text.trim().isEmpty) {
-                  return local.t("warning_field_cannot_be_empty");
+                  return "*Field cannot be empty*";
                 }
               }
               return null;
