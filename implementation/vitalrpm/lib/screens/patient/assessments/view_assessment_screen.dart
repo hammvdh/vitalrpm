@@ -13,7 +13,8 @@ class ViewAssessmentsScreen extends StatefulWidget {
   const ViewAssessmentsScreen({required this.assessment, Key? key})
       : super(key: key);
 
-  final DocumentSnapshot<Object?> assessment;
+  // ignore: prefer_typing_uninitialized_variables
+  final assessment;
 
   @override
   State<ViewAssessmentsScreen> createState() => _ViewAssessmentsScreenState();
@@ -33,13 +34,19 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
   }
 
   List<Map<String, dynamic>> vitals = [];
+  List assessments = [];
 
   String assessmentDate = '';
 
   void initialize() async {
     final LoadingOverlay overlay = LoadingOverlay.of(context);
 
-    vitals = await overlay.during(getMeasurements());
+    if (widget.assessment['type'] == "status") {
+      vitals = await overlay.during(getMeasurements());
+    } else {
+      assessments = await overlay.during(getAssessmentsForecasted());
+    }
+
     Timestamp timestamp = widget.assessment['datetime'];
     DateTime dateTime = timestamp.toDate();
     TimeOfDay timeOfDay = TimeOfDay.fromDateTime(dateTime);
@@ -147,7 +154,9 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            "Assessment",
+                            widget.assessment['type'] == "status"
+                                ? "Status Assessment"
+                                : "Forecast Assessment",
                             style: GoogleFonts.inter(
                               fontSize: 26,
                               color: Colors.white,
@@ -156,7 +165,9 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                           ),
                           SizedBox(height: 5),
                           Text(
-                            'Health Status Assessment',
+                            widget.assessment['type'] == "status"
+                                ? 'Health Status Assessment'
+                                : "Health Status Forecast",
                             style: GoogleFonts.inter(
                               fontSize: 16,
                               color: AppColors.textgrey,
@@ -243,100 +254,332 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                       ),
                     ),
                     SizedBox(height: 15),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Text(
-                        'Vital Sign Measurements',
-                        style: GoogleFonts.inter(
-                          fontSize: 20,
-                          color: AppColors.textblack,
-                          fontWeight: FontWeight.w600,
+                    if (widget.assessment['type'] == "status") ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Vital Sign Measurements',
+                          style: GoogleFonts.inter(
+                            fontSize: 20,
+                            color: AppColors.textblack,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        primary: false,
-                        itemCount: vitals.length,
-                        itemBuilder: (context, index) {
-                          final type = MeasurementTypes.measurementTypes[index];
-                          final item = vitals[index];
-                          return Container(
-                            margin: const EdgeInsets.only(top: 10),
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                  width: 1,
-                                  color:
-                                      const Color(0xFFD4D3D4).withOpacity(0.8),
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.white,
-                                boxShadow: const [
-                                  BoxShadow(
-                                      color: Color(0xFFDEE2E5),
-                                      offset: Offset(0, 30),
-                                      blurRadius: 45)
-                                ]),
-                            height: 105,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 15),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        item['type'],
-                                        style: GoogleFonts.inter(
-                                          fontSize: 16,
-                                          color: AppColors.darkBlue,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          primary: false,
+                          itemCount: vitals.length,
+                          itemBuilder: (context, index) {
+                            final type =
+                                MeasurementTypes.measurementTypes[index];
+                            final item = vitals[index];
+                            return Container(
+                              margin: const EdgeInsets.only(top: 10),
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                    width: 1,
+                                    color: const Color(0xFFD4D3D4)
+                                        .withOpacity(0.8),
                                   ),
-                                  Text(
-                                    item['readingTime'],
-                                    style: GoogleFonts.inter(
-                                      fontSize: 14,
-                                      color: AppColors.textgrey,
-                                      fontWeight: FontWeight.w500,
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.white,
+                                  boxShadow: const [
+                                    BoxShadow(
+                                        color: Color(0xFFDEE2E5),
+                                        offset: Offset(0, 30),
+                                        blurRadius: 45)
+                                  ]),
+                              height: 105,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 15),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          item['type'],
+                                          style: GoogleFonts.inter(
+                                            fontSize: 16,
+                                            color: AppColors.darkBlue,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        item['reading'] != null
-                                            ? (item['type'] == "Blood Pressure"
-                                                ? '${item['reading']['systolic']}/${item['reading']['diastolic']} (${item['unit']})'
-                                                : '${item['reading']} (${item['unit']})')
-                                            : "N/A",
-                                        style: GoogleFonts.inter(
-                                          fontSize: 18,
-                                          color: AppColors.blue,
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                    Text(
+                                      item['readingTime'],
+                                      style: GoogleFonts.inter(
+                                        fontSize: 14,
+                                        color: AppColors.textgrey,
+                                        fontWeight: FontWeight.w500,
                                       ),
-                                    ],
-                                  ),
-                                ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          item['reading'] != null
+                                              ? (item['type'] ==
+                                                      "Blood Pressure"
+                                                  ? '${item['reading']['systolic']}/${item['reading']['diastolic']} (${item['unit']})'
+                                                  : '${item['reading']} (${item['unit']})')
+                                              : "N/A",
+                                          style: GoogleFonts.inter(
+                                            fontSize: 18,
+                                            color: AppColors.blue,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
+                            );
+                          },
+                        ),
+                      ),
+                    ] else ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Forecasted Vital Signs',
+                          style: GoogleFonts.inter(
+                            fontSize: 20,
+                            color: AppColors.textblack,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: MeasurementTypes.measurementTypes
+                            .asMap()
+                            .entries
+                            .map((entry) {
+                          final index = entry.key;
+                          final measurementType = entry.value;
+                          String value;
+                          if (measurementType == 'Blood Pressure') {
+                            final lastTwoValues = widget
+                                .assessment['forecasted_vitals']
+                                .sublist(widget.assessment['forecasted_vitals']
+                                        .length -
+                                    2);
+                            value = '${lastTwoValues[0]}/${lastTwoValues[1]}';
+                          } else {
+                            value = widget.assessment['forecasted_vitals']
+                                    [index]
+                                .toString();
+                          }
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 8),
+                            child: Row(
+                              children: [
+                                Text(
+                                  '$measurementType: ',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 15,
+                                    color: AppColors.textgrey,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Text(
+                                  '$value',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 15,
+                                    color: AppColors.blue,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
                           );
-                        },
+                          // return Text('$measurementType: $value');
+                        }).toList(),
                       ),
-                    ),
+                      SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Status Assessments Used',
+                          style: GoogleFonts.inter(
+                            fontSize: 20,
+                            color: AppColors.textblack,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 10),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          primary: false,
+                          itemCount: assessments.length,
+                          itemBuilder: (context, index) {
+                            final assessment = assessments[index];
+                            Timestamp timestamp = assessment['datetime'];
+                            DateTime dateTime = timestamp.toDate();
+                            TimeOfDay timeOfDay =
+                                TimeOfDay.fromDateTime(dateTime);
+                            String formattedTime =
+                                "${timeOfDay.hour < 10 ? "0" : ""}${timeOfDay.hour}:${timeOfDay.minute < 10 ? "0" : ""}${timeOfDay.minute}";
+
+                            final assessmentDate =
+                                '${DateFormat.yMMMd().format(dateTime)} at $formattedTime';
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ViewAssessmentsScreen(
+                                      assessment: assessment,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.only(top: 10),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                      width: 1,
+                                      color: const Color(0xFFD4D3D4)
+                                          .withOpacity(0.8),
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.white,
+                                    boxShadow: const [
+                                      BoxShadow(
+                                          color: Color(0xFFDEE2E5),
+                                          offset: Offset(0, 20),
+                                          blurRadius: 10)
+                                    ]),
+                                height: 110,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 10),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            assessmentDate,
+                                            style: GoogleFonts.inter(
+                                              fontSize: 16,
+                                              color: const Color(0XFF565555),
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          const SizedBox(),
+                                          Icon(
+                                            Icons.chevron_right,
+                                            color: AppColors.darkBlue,
+                                            size: 21,
+                                          )
+                                        ],
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Divider(
+                                        thickness: 1,
+                                        color:
+                                            Color(0xFFD4D3D4).withOpacity(0.8),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "Report Type",
+                                                    style: GoogleFonts.inter(
+                                                      fontSize: 14,
+                                                      color: AppColors.grey,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    assessment['type'] ==
+                                                            "status"
+                                                        ? 'Status Assessment'
+                                                        : "Predicted Status",
+                                                    style: GoogleFonts.inter(
+                                                      fontSize: 16,
+                                                      color: AppColors.darkBlue,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: getStatusColor(
+                                                      assessment['status'])
+                                                  .withOpacity(0.15),
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              border: Border.all(
+                                                  width: 0.8,
+                                                  color: getStatusColor(
+                                                      assessment['status'])),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 4),
+                                            child: Text(
+                                              local.t(assessment['status'])!,
+                                              style: GoogleFonts.inter(
+                                                fontSize: 17,
+                                                color: getStatusColor(
+                                                    assessment['status']),
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    ],
                     const SizedBox(height: 50),
                   ]),
             ),
@@ -357,5 +600,26 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
       return AppColors.statusCritical;
     }
     return AppColors.blue;
+  }
+
+  Future<List<Map<String, dynamic>>> getAssessmentsForecasted() async {
+    final db = FirebaseFirestore.instance;
+    final measurementsRef = db.collection('assessments');
+    final assessment = widget.assessment;
+    final List<Map<String, dynamic>> forecastedAssessments = [];
+    for (int index = 0; index < assessment['assessments'].length; index++) {
+      final snapshot = await measurementsRef
+          .where('patientId', isEqualTo: userProvider.loginUser.documentId)
+          .where('docId', isEqualTo: assessment['assessments'][index])
+          .orderBy('datetime', descending: true)
+          .get();
+      if (snapshot.docs.isNotEmpty) {
+        final forecastedAssessment = snapshot.docs.first.data();
+        forecastedAssessments.add(forecastedAssessment);
+      }
+    }
+    forecastedAssessments
+        .sort((a, b) => b['datetime'].compareTo(a['datetime']));
+    return forecastedAssessments;
   }
 }

@@ -11,6 +11,7 @@ import 'package:vitalrpm/screens/patient/assessments/assessment_history_screen.d
 import 'package:vitalrpm/screens/patient/measurement/add_measurement_screen.dart';
 import 'package:vitalrpm/screens/patient/patient_home.dart';
 import 'package:vitalrpm/screens/patient/patient_settings_screen.dart';
+import 'package:vitalrpm/screens/patient_details_screen.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   const CustomBottomNavigationBar({Key? key, this.currentPage})
@@ -129,7 +130,7 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => const AssessmentHistoryScreen(),
+            builder: (_) => PatientProfileScreen(),
           ),
         );
         //  Navigator.pushReplacement(

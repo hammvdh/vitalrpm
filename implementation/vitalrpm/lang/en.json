@@ -1,3 +1,8 @@
 {
-  "hello": "Hello"
+  "hello": "Hello",
+  "status_normal": "Normal",
+  "status_warning": "Warning",
+  "status_high": "High",
+  "status_critical": "Critical",
+  "n/a":"N/A"
 }

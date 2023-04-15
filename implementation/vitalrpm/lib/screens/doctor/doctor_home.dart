@@ -60,7 +60,7 @@ class _DoctorHomeDashboardState extends State<DoctorHomeDashboard> {
                               child: Image(
                                 width: MediaQuery.of(context).size.width,
                                 image: const AssetImage(
-                                    'assets/images/account.png'),
+                                    'assets/images/profile_avatar.png'),
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -152,8 +152,7 @@ class _DoctorHomeDashboardState extends State<DoctorHomeDashboard> {
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: Color.fromARGB(255, 5, 39, 98)
-                                    .withOpacity(0.3),
+                                color: Color(0xFF052762).withOpacity(0.3),
                                 spreadRadius: 1,
                                 blurRadius: 20,
                                 offset: Offset(

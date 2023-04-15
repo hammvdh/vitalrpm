@@ -9,6 +9,7 @@ import 'package:vitalrpm/providers/user_provider.dart';
 import 'package:vitalrpm/screens/auth/auth_wrapper.dart';
 import 'package:vitalrpm/screens/patient/measurement/add_measurement_screen.dart';
 import 'package:vitalrpm/widgets/bottom_navbar_widget.dart';
+import 'package:vitalrpm/widgets/loading_overlay.dart';
 import '../../app_localizations.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import './measurement/measurement_history_screen.dart';
@@ -31,25 +32,19 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
   @override
   initState() {
     userProvider = context.read<UserProvider>();
-    initialize();
+    Future.delayed(const Duration(seconds: 0), () {
+      initialize();
+    });
     super.initState();
   }
 
   initialize() async {
+    final LoadingOverlay overlay = LoadingOverlay.of(context);
+    overlay.show();
     measurementList = await getLastMeasurements();
     setState(() {});
+    overlay.hide();
   }
-
-  final list = [];
-
-  final iconList = <IconData>[
-    Icons.home_outlined,
-    Icons.assessment_outlined,
-    Icons.person_outlined,
-    Icons.settings_outlined,
-  ];
-
-  var bottomNavIndex = 1;
 
   getLastMeasurements() async {
     final db = FirebaseFirestore.instance;
@@ -215,15 +210,6 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Container(
-                        //   width: screenWidth,
-                        //   height: 200,
-                        //   margin: const EdgeInsets.symmetric(
-                        //       horizontal: 10, vertical: 10),
-                        //   decoration: BoxDecoration(
-                        //       color: AppColors.darkBlue,
-                        //       borderRadius: BorderRadius.circular(10)),
-                        // ),
                         const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -243,6 +229,20 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                             ),
                           ],
                         ),
+                        if (measurementList.isEmpty) ...[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
+                            child: Text(
+                              "Loading Measurements...",
+                              style: GoogleFonts.inter(
+                                fontSize: 17,
+                                color: AppColors.textgrey,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 15),
                           child: ListView.builder(
@@ -263,7 +263,7 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                                         type: type.toString(),
                                       ),
                                     ),
-                                  );
+                                  ).then((value) => {initialize()});
                                 },
                                 child: Container(
                                   margin: const EdgeInsets.only(top: 10),

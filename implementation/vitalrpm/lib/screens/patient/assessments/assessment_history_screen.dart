@@ -1,13 +1,23 @@
+// ignore_for_file: depend_on_referenced_packages
+
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:vitalrpm/app_localizations.dart';
 import 'package:vitalrpm/const/color_const.dart';
+import 'package:vitalrpm/const/measurement_types.dart';
+import 'package:vitalrpm/environment.dart';
 import 'package:vitalrpm/providers/user_provider.dart';
+import 'package:vitalrpm/screens/patient/assessments/view_assessment_screen.dart';
 import 'package:vitalrpm/screens/patient/measurement/add_measurement_screen.dart';
 import 'package:vitalrpm/widgets/bottom_navbar_widget.dart';
-// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'package:vitalrpm/widgets/loading_overlay.dart';
 
 class AssessmentHistoryScreen extends StatefulWidget {
   const AssessmentHistoryScreen({Key? key}) : super(key: key);
@@ -21,52 +31,91 @@ class AssessmentHistoryScreen extends StatefulWidget {
 class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
   List<Map<String, dynamic>> assessmentList = [];
   late UserProvider userProvider;
+  late AppLocalizations local;
   @override
   void initState() {
     userProvider = context.read<UserProvider>();
-    initialize();
     super.initState();
   }
 
   var lastReading = '';
 
-  void initialize() async {
-    assessmentList = await getAssessments();
-    setState(() {});
-  }
-
-  getAssessments() async {
+  getLastMeasurements() async {
     final db = FirebaseFirestore.instance;
-    final assessmentRef = db.collection('assessments');
-    final assessments = <Map<String, dynamic>>[];
-    final snapshot = await assessmentRef
-        .where('patientId', isEqualTo: userProvider.loginUser.documentId)
-        .orderBy('date', descending: true)
-        .orderBy('time', descending: true)
-        .get();
-    if (snapshot.docs.isNotEmpty) {
-      for (final assessment in snapshot.docs) {
-        assessments.add(assessment.data());
+    final measurementsRef = db.collection('measurements');
+    final measurementTypes = MeasurementTypes.measurementTypes;
+    final vitalsigns = [];
+    final vitalDocs = [];
+    for (String type in measurementTypes) {
+      final snapshot = await measurementsRef
+          .where('patientId', isEqualTo: userProvider.loginUser.documentId)
+          .where('type', isEqualTo: type)
+          .orderBy('date', descending: true)
+          .orderBy('time', descending: true)
+          .limit(1)
+          .get();
+      if (snapshot.docs.isNotEmpty) {
+        final measurement = snapshot.docs.first.data();
+        final reading = measurement['reading'];
+        type == "Blood Pressure"
+            ? [
+                vitalsigns.add(double.parse(reading['systolic'])),
+                vitalsigns.add(double.parse(reading['diastolic']))
+              ]
+            : vitalsigns.add(double.parse(reading));
+        vitalDocs.add(measurement['docId'].toString());
       }
     }
-    return assessments;
+    print("Vital Signs $vitalsigns");
+    return {"vitals": vitalsigns, "documents": vitalDocs};
   }
 
-  String _getTimeAgo(Duration duration) {
-    if (duration.inSeconds < 60) {
-      return '${duration.inSeconds} seconds';
-    } else if (duration.inMinutes < 60) {
-      return '${duration.inMinutes} minutes';
-    } else if (duration.inHours < 24) {
-      return '${duration.inHours} hours';
-    } else if (duration.inDays < 30) {
-      return '${duration.inDays} days';
-    }
-    return '${duration.inDays} days';
+  void _fetchData(BuildContext context, [bool mounted = true]) async {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) {
+          return Dialog(
+            // The background color
+            backgroundColor: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 40),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // The loading indicator
+                  CircularProgressIndicator(
+                    color: AppColors.blue,
+                  ),
+                  const SizedBox(
+                    width: 15,
+                  ),
+                  // Some text
+                  Text(
+                    'Generating Assessment',
+                    style: GoogleFonts.inter(
+                      fontSize: 17,
+                      color: AppColors.textblack,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+
+    final measurements = await getLastMeasurements();
+    await generateAssessment(measurements['vitals'], measurements['documents']);
+    await checkCanForecast();
+
+    if (!mounted) return;
+    Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
+    local = AppLocalizations.of(context)!;
     var screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -154,19 +203,24 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        Container(
-                          decoration: BoxDecoration(
-                              color: AppColors.blue,
-                              borderRadius: BorderRadius.circular(30)),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 10),
-                            child: Text(
-                              'Generate',
-                              style: GoogleFonts.inter(
-                                fontSize: 14,
-                                color: AppColors.textwhite,
-                                fontWeight: FontWeight.w600,
+                        GestureDetector(
+                          onTap: () async {
+                            _fetchData(context);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: AppColors.blue,
+                                borderRadius: BorderRadius.circular(30)),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 10),
+                              child: Text(
+                                'Generate',
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  color: AppColors.textwhite,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ),
@@ -174,146 +228,320 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                       ],
                     ),
                   ),
-                  if (assessmentList.isEmpty) ...[
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 15),
-                      child: Text("No Readings Found."),
-                    )
-                  ] else ...[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        primary: false,
-                        itemCount: assessmentList.length,
-                        itemBuilder: (context, index) {
-                          final measurement = assessmentList[index];
+                  StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('assessments')
+                          .where('patientId',
+                              isEqualTo: userProvider.loginUser.documentId)
+                          .orderBy('datetime', descending: true)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
                           return Container(
-                            margin: const EdgeInsets.only(top: 10),
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                  width: 1,
-                                  color: Color(0xFFD4D3D4).withOpacity(0.8),
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.white,
-                                boxShadow: const [
-                                  BoxShadow(
-                                      color: Color(0xFFDEE2E5),
-                                      offset: Offset(0, 20),
-                                      blurRadius: 10)
-                                ]),
-                            height: 115,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 10),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            DateFormat.yMMMd().format(
-                                                DateTime.parse(
-                                                    measurement['date'])),
-                                            style: GoogleFonts.inter(
-                                              fontSize: 16,
-                                              color: const Color(0XFF565555),
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 20),
-                                          Text(
-                                            measurement['time'],
-                                            style: GoogleFonts.inter(
-                                              fontSize: 16,
-                                              color: const Color(0XFF565555),
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        ],
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 15),
+                            child: const Text("No Readings Found."),
+                          );
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            primary: false,
+                            itemCount: snapshot.data!.docs.length,
+                            itemBuilder: (context, index) {
+                              DocumentSnapshot assessment =
+                                  snapshot.data!.docs[index];
+                              Timestamp timestamp = assessment['datetime'];
+                              DateTime dateTime = timestamp.toDate();
+                              TimeOfDay timeOfDay =
+                                  TimeOfDay.fromDateTime(dateTime);
+                              String formattedTime =
+                                  "${timeOfDay.hour < 10 ? "0" : ""}${timeOfDay.hour}:${timeOfDay.minute < 10 ? "0" : ""}${timeOfDay.minute}";
+
+                              final assessmentDate =
+                                  '${DateFormat.yMMMd().format(dateTime)} at $formattedTime';
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ViewAssessmentsScreen(
+                                        assessment: assessment,
                                       ),
-                                      const SizedBox()
-                                      // Icon(
-                                      //   Icons.chevron_right,
-                                      //   color: AppColors.darkBlue,
-                                      //   size: 21,
-                                      // )
-                                    ],
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Divider(
-                                    thickness: 1,
-                                    color: Color(0xFFD4D3D4).withOpacity(0.8),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Status Assessment',
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(top: 10),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                        width: 1,
+                                        color: const Color(0xFFD4D3D4)
+                                            .withOpacity(0.8),
+                                      ),
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.white,
+                                      boxShadow: const [
+                                        BoxShadow(
+                                            color: Color(0xFFDEE2E5),
+                                            offset: Offset(0, 20),
+                                            blurRadius: 10)
+                                      ]),
+                                  height: 110,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15, vertical: 10),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              assessmentDate,
+                                              style: GoogleFonts.inter(
+                                                fontSize: 16,
+                                                color: const Color(0XFF565555),
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            const SizedBox(),
+                                            Icon(
+                                              Icons.chevron_right,
+                                              color: AppColors.darkBlue,
+                                              size: 21,
+                                            )
+                                          ],
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Divider(
+                                          thickness: 1,
+                                          color: Color(0xFFD4D3D4)
+                                              .withOpacity(0.8),
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "Report Type",
+                                                      style: GoogleFonts.inter(
+                                                        fontSize: 14,
+                                                        color: AppColors.grey,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      assessment['type'] ==
+                                                              "status"
+                                                          ? 'Status Assessment'
+                                                          : "Predicted Status",
+                                                      style: GoogleFonts.inter(
+                                                        fontSize: 16,
+                                                        color:
+                                                            AppColors.darkBlue,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color: getStatusColor(
+                                                        assessment['status'])
+                                                    .withOpacity(0.15),
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                border: Border.all(
+                                                    width: 0.8,
+                                                    color: getStatusColor(
+                                                        assessment['status'])),
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 4),
+                                              child: Text(
+                                                local.t(assessment['status'])!,
                                                 style: GoogleFonts.inter(
                                                   fontSize: 17,
-                                                  color: AppColors.darkBlue,
+                                                  color: getStatusColor(
+                                                      assessment['status']),
                                                   fontWeight: FontWeight.w600,
                                                 ),
                                               ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        height: 30,
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 5),
-                                        decoration: BoxDecoration(
-                                            color: AppColors.blue,
-                                            borderRadius:
-                                                BorderRadius.circular(5)),
-                                        child: Text(
-                                          'Normal'.toUpperCase(),
-                                          style: GoogleFonts.inter(
-                                            fontSize: 15,
-                                            color: AppColors.textwhite,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      )
-                                      // TODO - WORK ON & ADD BELOW CODE WHEN VITAL RANGE DECIDED
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 260),
-                  ]
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      }),
+                  const SizedBox(height: 50),
                 ]),
           ),
         ]),
       )),
     );
+  }
+
+  checkCanForecast() async {
+    final QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('assessments')
+        .where('type', isEqualTo: "status")
+        .get();
+
+    final List vitalValues = [];
+    final List assessmentDocs = [];
+
+    for (final QueryDocumentSnapshot<Map<String, dynamic>> document
+        in snapshot.docs) {
+      final List vitalValue = document.get('vital_values');
+
+      if (vitalValue != null) {
+        vitalValues.add(vitalValue);
+        assessmentDocs.add(document.get('docId'));
+      }
+    }
+
+    if (vitalValues.length >= 7) {
+      print("Generating Forecast");
+      generateForecast(vitalValues, assessmentDocs);
+    }
+  }
+
+  generateForecast(assessments, docs) async {
+    String url = Environment.host + 'forecast';
+    print(url);
+    final response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({"vitals": assessments.toList()}),
+    );
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      if (kDebugMode) {
+        print(json);
+      }
+      DocumentReference assessmentDocument;
+      FirebaseFirestore.instance.runTransaction((transaction) async {
+        try {
+          assessmentDocument =
+              FirebaseFirestore.instance.collection('assessments').doc();
+          transaction.set(assessmentDocument, {
+            'docId': assessmentDocument.id,
+            'patientId': userProvider.loginUser.documentId,
+            'status': json['status'],
+            // 'acuity': json['predicted_acuity'],
+            'forecasted_vitals': json['forecasted_vitals'],
+            'assessments': docs,
+            'datetime': DateTime.now(),
+            'type': "forecast",
+          });
+        } catch (e) {
+          if (kDebugMode) {
+            print("Generate Forecast - Error Occured - $e");
+          }
+        }
+      });
+    }
+  }
+
+  generateAssessment(vitals, docs) async {
+    print("Generating Assessment");
+    String url = Environment.host + 'status';
+    print(url);
+    final response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({"vitals": vitals.toList()}),
+    );
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      if (kDebugMode) {
+        print(json);
+      }
+      DocumentReference assessmentDocument;
+      FirebaseFirestore.instance.runTransaction((transaction) async {
+        try {
+          assessmentDocument =
+              FirebaseFirestore.instance.collection('assessments').doc();
+          transaction.set(assessmentDocument, {
+            'docId': assessmentDocument.id,
+            'patientId': userProvider.loginUser.documentId,
+            'status': json['status'],
+            'acuity': json['predicted_acuity'],
+            'vital_values': json['vitals'],
+            'vital_docs': docs,
+            'datetime': DateTime.now(),
+            'type': "status",
+          });
+        } catch (e) {
+          if (kDebugMode) {
+            print("Generate Assessment - Error Occured - $e");
+          }
+        }
+      });
+    }
+  }
+
+  getStatusColor(status) {
+    if (status == "status_normal") {
+      return AppColors.statusNormal;
+    } else if (status == "status_warning") {
+      return AppColors.statusWarning;
+    } else if (status == "status_high") {
+      return AppColors.statusHigh;
+    } else if (status == "status_critical") {
+      return AppColors.statusCritical;
+    }
+  }
+
+  getMeasurementUnit(String type) {
+    String unit = '';
+    if (type == "Blood Pressure") {
+      unit = "mmHg";
+    } else if (type == "Body Temperature") {
+      unit = "°F";
+    } else if (type == "Heart Rate") {
+      unit = "bpm";
+    } else if (type == "Blood Oxygen Saturation") {
+      unit = "%";
+    } else if (type == "Respiratory Rate") {
+      unit = "bpm";
+    }
+    return unit;
   }
 }

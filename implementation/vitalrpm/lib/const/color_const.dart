@@ -7,4 +7,9 @@ class AppColors {
   static Color textgrey = const Color(0xFF939AA2);
   static Color textblack = const Color(0xFF201F21);
   static Color textwhite = const Color(0xFFFFFFFF);
+
+  static Color statusNormal = const Color(0xFF31B5FF);
+  static Color statusWarning = const Color(0xFFDFA91E);
+  static Color statusHigh = const Color(0xFFF56E34);
+  static Color statusCritical = const Color(0xFFD84D3A);
 }

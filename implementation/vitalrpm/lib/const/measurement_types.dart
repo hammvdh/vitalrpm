@@ -1,9 +1,9 @@
 class MeasurementTypes {
   static List<String> measurementTypes = [
-    "Blood Pressure",
-    "Heart Rate",
     "Body Temperature",
+    "Heart Rate",
     "Respiratory Rate",
-    "Blood Oxygen Saturation"
+    "Blood Oxygen Saturation",
+    "Blood Pressure",
   ];
 }
