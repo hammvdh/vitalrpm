@@ -135,7 +135,9 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         inactiveColor: AppColors.grey,
         gapLocation: loginUser.userType.trim().toLowerCase() == 'doctor'
             ? GapLocation.none
-            : GapLocation.end,
+            : widget.currentPage == 2
+                ? GapLocation.none
+                : GapLocation.end,
         notchSmoothness: NotchSmoothness.softEdge,
         onTap: (index) {
           setState(() {
