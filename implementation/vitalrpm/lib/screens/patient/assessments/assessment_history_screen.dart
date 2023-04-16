@@ -18,6 +18,7 @@ import 'package:vitalrpm/widgets/bottom_navbar_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:vitalrpm/widgets/loading_overlay.dart';
+import 'package:vitalrpm/widgets/utility.dart';
 
 class AssessmentHistoryScreen extends StatefulWidget {
   const AssessmentHistoryScreen({Key? key}) : super(key: key);
@@ -95,7 +96,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                     'Generating Assessment',
                     style: GoogleFonts.inter(
                       fontSize: 17,
-                      color: AppColors.textblack,
+                      color: AppColors.textBlack,
                       fontWeight: FontWeight.w500,
                     ),
                   )
@@ -106,8 +107,21 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
         });
 
     final measurements = await getLastMeasurements();
-    await generateAssessment(measurements['vitals'], measurements['documents']);
-    await checkCanForecast();
+    if (measurements['vitals'].length == 6 &&
+        measurements['documents'].length == 5) {
+      await generateAssessment(
+          measurements['vitals'], measurements['documents']);
+      await checkCanForecast();
+      Future.delayed(Duration.zero, () async {
+        Utility.success(context, "Generated Assessments Successfully.");
+      });
+    } else {
+      print("Cannot Generate");
+      Future.delayed(Duration.zero, () async {
+        Utility.error(context,
+            "Cannot Generate Assessments. You need at least one measurement added for each type");
+      });
+    }
 
     if (!mounted) return;
     Navigator.of(context).pop();
@@ -134,7 +148,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
           size: 30,
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       bottomNavigationBar: const CustomBottomNavigationBar(currentPage: 1),
       body: SafeArea(
           child: SingleChildScrollView(
@@ -167,7 +181,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                           "Keep track of your health assessments",
                           style: GoogleFonts.inter(
                             fontSize: 14,
-                            color: AppColors.textgrey,
+                            color: AppColors.textGrey,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -199,7 +213,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                           'Assessments',
                           style: GoogleFonts.inter(
                             fontSize: 22,
-                            color: AppColors.textblack,
+                            color: AppColors.textBlack,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -218,7 +232,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                                 'Generate',
                                 style: GoogleFonts.inter(
                                   fontSize: 14,
-                                  color: AppColors.textwhite,
+                                  color: AppColors.textWhite,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -236,13 +250,22 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                           .orderBy('datetime', descending: true)
                           .snapshots(),
                       builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
+                        if (snapshot.data == null ||
+                            snapshot.data!.docs.isEmpty) {
                           return Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 15),
-                            child: const Text("No Readings Found."),
+                            child: Text(
+                              "No Readings Found.",
+                              style: GoogleFonts.inter(
+                                fontSize: 14,
+                                color: AppColors.grey,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           );
                         }
+
                         return Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 15, vertical: 10),
@@ -413,11 +436,15 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
   }
 
   checkCanForecast() async {
-    final QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
-        .instance
-        .collection('assessments')
-        .where('type', isEqualTo: "status")
-        .get();
+    final QuerySnapshot<Map<String, dynamic>> snapshot =
+        await FirebaseFirestore.instance
+            .collection('assessments')
+            .where(
+              'patientId',
+              isEqualTo: userProvider.loginUser.documentId,
+            )
+            .where('type', isEqualTo: "status")
+            .get();
 
     final List vitalValues = [];
     final List assessmentDocs = [];

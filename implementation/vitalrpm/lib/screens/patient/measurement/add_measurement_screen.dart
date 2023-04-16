@@ -11,9 +11,10 @@ import 'package:vitalrpm/widgets/label_text_field_widget.dart';
 import 'package:vitalrpm/widgets/label_time_field_widget.dart';
 
 class AddMeasurementScreen extends StatefulWidget {
-  const AddMeasurementScreen({super.key, this.type});
+  const AddMeasurementScreen({super.key, this.type, this.patientId});
 
   final String? type;
+  final String? patientId;
 
   @override
   State<AddMeasurementScreen> createState() => _AddMeasurementScreenState();
@@ -21,9 +22,11 @@ class AddMeasurementScreen extends StatefulWidget {
 
 class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
   late UserProvider userProvider;
+  late bool isUserDoctor;
   @override
   void initState() {
     userProvider = context.read<UserProvider>();
+    isUserDoctor = userProvider.loginUser.userType.toLowerCase() == "doctor";
     if (widget.type != null) {
       measurementTypeController.text = widget.type!;
     }
@@ -114,7 +117,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                   'Keep track of your health vital sign measurements',
                                   style: GoogleFonts.inter(
                                     fontSize: 14,
-                                    color: AppColors.textgrey,
+                                    color: AppColors.textGrey,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -144,7 +147,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                             'Measurement Type',
                             style: GoogleFonts.inter(
                               fontSize: 18,
-                              color: AppColors.textblack,
+                              color: AppColors.textBlack,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -318,7 +321,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                   'Meals',
                                   style: GoogleFonts.inter(
                                     fontSize: 18,
-                                    color: AppColors.textblack,
+                                    color: AppColors.textBlack,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -351,7 +354,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                               'Notes',
                               style: GoogleFonts.inter(
                                 fontSize: 18,
-                                color: AppColors.textblack,
+                                color: AppColors.textBlack,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -399,7 +402,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                         'Cancel',
                                         style: GoogleFonts.inter(
                                           fontSize: 18,
-                                          color: AppColors.textwhite,
+                                          color: AppColors.textWhite,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -423,7 +426,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                         'Save',
                                         style: GoogleFonts.inter(
                                           fontSize: 18,
-                                          color: AppColors.textwhite,
+                                          color: AppColors.textWhite,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -476,7 +479,9 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
             FirebaseFirestore.instance.collection('measurements').doc();
         transaction.set(measurementDocument, {
           'docId': measurementDocument.id,
-          'patientId': userProvider.loginUser.documentId,
+          'patientId': isUserDoctor
+              ? widget.patientId
+              : userProvider.loginUser.documentId,
           'type': type,
           'reading': type == "Blood Pressure"
               ? {

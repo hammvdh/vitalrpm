@@ -10,11 +10,13 @@ import 'package:intl/intl.dart';
 import 'package:vitalrpm/widgets/loading_overlay.dart';
 
 class ViewAssessmentsScreen extends StatefulWidget {
-  const ViewAssessmentsScreen({required this.assessment, Key? key})
+  const ViewAssessmentsScreen(
+      {required this.assessment, Key? key, this.patientId})
       : super(key: key);
 
   // ignore: prefer_typing_uninitialized_variables
   final assessment;
+  final String? patientId;
 
   @override
   State<ViewAssessmentsScreen> createState() => _ViewAssessmentsScreenState();
@@ -23,10 +25,12 @@ class ViewAssessmentsScreen extends StatefulWidget {
 class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
   late UserProvider userProvider;
   late AppLocalizations local;
+  late bool isUserDoctor;
 
   @override
   void initState() {
     userProvider = context.read<UserProvider>();
+    isUserDoctor = userProvider.loginUser.userType.toLowerCase() == "doctor";
     Future.delayed(const Duration(seconds: 0), () {
       initialize();
     });
@@ -66,7 +70,10 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
     final lastMeasurements = <Map<String, dynamic>>[];
     for (int index = 0; index < assessment['vital_docs'].length; index++) {
       final snapshot = await measurementsRef
-          .where('patientId', isEqualTo: userProvider.loginUser.documentId)
+          .where('patientId',
+              isEqualTo: isUserDoctor
+                  ? widget.patientId
+                  : userProvider.loginUser.documentId)
           .where('docId', isEqualTo: assessment['vital_docs'][index])
           .orderBy('date', descending: true)
           .orderBy('time', descending: true)
@@ -170,7 +177,7 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                                 : "Health Status Forecast",
                             style: GoogleFonts.inter(
                               fontSize: 16,
-                              color: AppColors.textgrey,
+                              color: AppColors.textGrey,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -205,7 +212,7 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                               local.t(widget.assessment['status'])!,
                               style: GoogleFonts.inter(
                                 fontSize: 28,
-                                color: AppColors.textwhite,
+                                color: AppColors.textWhite,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -236,7 +243,7 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                         'Assessment Date',
                         style: GoogleFonts.inter(
                           fontSize: 20,
-                          color: AppColors.textblack,
+                          color: AppColors.textBlack,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -248,7 +255,7 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                         assessmentDate.toString(),
                         style: GoogleFonts.inter(
                           fontSize: 16,
-                          color: AppColors.textgrey,
+                          color: AppColors.textGrey,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -261,7 +268,7 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                           'Vital Sign Measurements',
                           style: GoogleFonts.inter(
                             fontSize: 20,
-                            color: AppColors.textblack,
+                            color: AppColors.textBlack,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -319,7 +326,7 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                                       item['readingTime'],
                                       style: GoogleFonts.inter(
                                         fontSize: 14,
-                                        color: AppColors.textgrey,
+                                        color: AppColors.textGrey,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -358,7 +365,7 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                           'Forecasted Vital Signs',
                           style: GoogleFonts.inter(
                             fontSize: 20,
-                            color: AppColors.textblack,
+                            color: AppColors.textBlack,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -394,7 +401,7 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                                   '$measurementType: ',
                                   style: GoogleFonts.inter(
                                     fontSize: 15,
-                                    color: AppColors.textgrey,
+                                    color: AppColors.textGrey,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -419,7 +426,7 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                           'Status Assessments Used',
                           style: GoogleFonts.inter(
                             fontSize: 20,
-                            color: AppColors.textblack,
+                            color: AppColors.textBlack,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -609,7 +616,10 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
     final List<Map<String, dynamic>> forecastedAssessments = [];
     for (int index = 0; index < assessment['assessments'].length; index++) {
       final snapshot = await measurementsRef
-          .where('patientId', isEqualTo: userProvider.loginUser.documentId)
+          .where('patientId',
+              isEqualTo: isUserDoctor
+                  ? widget.patientId
+                  : userProvider.loginUser.documentId)
           .where('docId', isEqualTo: assessment['assessments'][index])
           .orderBy('datetime', descending: true)
           .get();

@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/providers/user_provider.dart';
 import 'package:vitalrpm/screens/auth/auth_wrapper.dart';
+import 'package:vitalrpm/screens/doctor/view_patient_details.dart';
+import 'package:vitalrpm/widgets/bottom_navbar_widget.dart';
 
 class DoctorHomeDashboard extends StatefulWidget {
   const DoctorHomeDashboard({super.key});
@@ -25,101 +28,79 @@ class _DoctorHomeDashboardState extends State<DoctorHomeDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: const CustomBottomNavigationBar(currentPage: 0),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 height: 100,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
+                decoration: BoxDecoration(
+                  color: AppColors.blue,
                 ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          onTap: () {},
-                          child: Container(
-                            height: 50,
-                            width: 50,
-                            decoration: BoxDecoration(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 22),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Welcome!',
+                            style: GoogleFonts.inter(
+                              fontSize: 18,
                               color: AppColors.darkBlue,
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(50),
-                              child: Image(
-                                width: MediaQuery.of(context).size.width,
-                                image: const AssetImage(
-                                    'assets/images/profile_avatar.png'),
-                                fit: BoxFit.cover,
-                              ),
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
-                        ),
-                        SizedBox(width: 10),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Welcome,',
-                              style: GoogleFonts.inter(
-                                fontSize: 17,
-                                color: AppColors.grey,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
+                          SizedBox(
+                            width: 250,
+                            child: Text(
                               'Dr. ${userProvider.loginUser.firstName} ${userProvider.loginUser.lastName}',
                               style: GoogleFonts.inter(
                                 fontSize: 20,
-                                color: AppColors.darkBlue,
-                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    IconButton(
-                      color: Colors.blue,
-                      icon: Icon(
-                        Icons.logout,
-                        color: AppColors.blue,
-                        size: 35,
+                          )
+                        ],
                       ),
-                      tooltip: 'Logout',
-                      onPressed: () {
-                        userProvider.logout();
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const AuthenticationWrapper(),
+                      Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: AppColors.darkBlue,
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(50),
+                          child: Image(
+                            width: MediaQuery.of(context).size.width,
+                            image: const AssetImage(
+                                'assets/images/profile_avatar.png'),
+                            fit: BoxFit.cover,
                           ),
-                        );
-                      },
-                    ),
-                  ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                 child: Text(
-                  "Your Patients",
+                  "Patient List",
                   style: GoogleFonts.inter(
-                    fontSize: 23,
-                    color: AppColors.grey,
+                    fontSize: 20,
+                    color: AppColors.textBlack,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -132,10 +113,18 @@ class _DoctorHomeDashboardState extends State<DoctorHomeDashboard> {
                           isEqualTo: userProvider.loginUser.doctorId)
                       .snapshots(),
                   builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      print('No Patient');
+                    if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
                       return Container(
-                        child: Text('No Data'),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 15),
+                        child: Text(
+                          "No Patients Added.",
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            color: AppColors.grey,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       );
                     }
                     return ListView.builder(
@@ -143,56 +132,71 @@ class _DoctorHomeDashboardState extends State<DoctorHomeDashboard> {
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (context, index) {
                         DocumentSnapshot patient = snapshot.data!.docs[index];
-                        return Container(
-                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 5),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 20),
-                          decoration: BoxDecoration(
-                            color: Color(0XFF1d3566),
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(0xFF052762).withOpacity(0.3),
-                                spreadRadius: 1,
-                                blurRadius: 20,
-                                offset: Offset(
-                                    22, 19), // changes position of shadow
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                builder: (context) => ViewPatientDetails(
+                                  patient: patient,
+                                ),
                               ),
-                            ],
+                            );
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.fromLTRB(20, 0, 20, 5),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 20),
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                  width: 1,
+                                  color:
+                                      const Color(0xFFD4D3D4).withOpacity(0.8),
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
+                                boxShadow: const [
+                                  BoxShadow(
+                                      color: Color(0xFFDEE2E5),
+                                      offset: Offset(0, 30),
+                                      blurRadius: 45)
+                                ]),
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${patient['firstName']} ${patient['lastName']}',
+                                        style: GoogleFonts.inter(
+                                          fontSize: 18,
+                                          color: AppColors.textBlack,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Text(
+                                        patient['emailAddress'],
+                                        style: GoogleFonts.inter(
+                                          fontSize: 14,
+                                          color: AppColors.textGrey,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    color: AppColors.darkBlue,
+                                    size: 25,
+                                  ),
+                                ]),
                           ),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '${patient.get('firstName')} ${patient.get('lastName')}',
-                                      style: GoogleFonts.inter(
-                                        fontSize: 25,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Text(
-                                      "Status: Normal",
-                                      style: GoogleFonts.inter(
-                                        fontSize: 17,
-                                        color: Color(0xff92d3ff),
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Icon(
-                                  Icons.chevron_right,
-                                  color: Color(0xff92d3ff),
-                                  size: 35,
-                                ),
-                              ]),
                         );
                       },
                     );

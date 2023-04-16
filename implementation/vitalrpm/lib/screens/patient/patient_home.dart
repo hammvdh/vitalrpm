@@ -120,7 +120,7 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
             size: 30,
           ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
         bottomNavigationBar: const CustomBottomNavigationBar(currentPage: 0),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -163,32 +163,20 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                             )
                           ],
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            userProvider.logout();
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const AuthenticationWrapper(),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            height: 70,
-                            width: 70,
-                            decoration: BoxDecoration(
-                              color: AppColors.darkBlue,
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(50),
-                              child: Image(
-                                width: MediaQuery.of(context).size.width,
-                                image: const AssetImage(
-                                    'assets/images/profile_avatar.png'),
-                                fit: BoxFit.cover,
-                              ),
+                        Container(
+                          height: 70,
+                          width: 70,
+                          decoration: BoxDecoration(
+                            color: AppColors.darkBlue,
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(50),
+                            child: Image(
+                              width: MediaQuery.of(context).size.width,
+                              image: const AssetImage(
+                                  'assets/images/profile_avatar.png'),
+                              fit: BoxFit.cover,
                             ),
                           ),
                         )
@@ -202,8 +190,8 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                   decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
                     ),
                   ),
                   child: Column(
@@ -222,7 +210,7 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                                 'Measurements',
                                 style: GoogleFonts.inter(
                                   fontSize: 21,
-                                  color: AppColors.textblack,
+                                  color: AppColors.textBlack,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -237,7 +225,7 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                               "Loading Measurements...",
                               style: GoogleFonts.inter(
                                 fontSize: 17,
-                                color: AppColors.textgrey,
+                                color: AppColors.textGrey,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -309,7 +297,7 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                                               item['lastReading'],
                                               style: GoogleFonts.inter(
                                                 fontSize: 14,
-                                                color: AppColors.textgrey,
+                                                color: AppColors.textGrey,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
@@ -352,54 +340,6 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                           ),
                         ),
                         const SizedBox(height: 50),
-
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //   crossAxisAlignment: CrossAxisAlignment.center,
-                        //   children: [
-                        //     Padding(
-                        //       padding:
-                        //           const EdgeInsets.symmetric(horizontal: 20),
-                        //       child: Text(
-                        //         'Pending Tasks',
-                        //         style: GoogleFonts.inter(
-                        //           fontSize: 21,
-                        //           color: AppColors.textblack,
-                        //           fontWeight: FontWeight.w600,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //     Padding(
-                        //       padding:
-                        //           const EdgeInsets.symmetric(horizontal: 20),
-                        //       child: Text(
-                        //         'VIEW ALL',
-                        //         style: GoogleFonts.inter(
-                        //           fontSize: 14,
-                        //           color: AppColors.blue,
-                        //           fontWeight: FontWeight.w600,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
-                        // const SizedBox(height: 20),
-                        // Container(
-                        //   height: 100,
-                        //   margin: const EdgeInsets.symmetric(horizontal: 15),
-                        //   decoration: BoxDecoration(
-                        //       color: const Color(0XFFD1E2EC),
-                        //       borderRadius: BorderRadius.circular(10)),
-                        // ),
-                        // Container(
-                        //   height: 100,
-                        //   margin: const EdgeInsets.symmetric(
-                        //       horizontal: 15, vertical: 10),
-                        //   decoration: BoxDecoration(
-                        //       color: const Color(0XFFD1E2EC),
-                        //       borderRadius: BorderRadius.circular(10)),
-                        // ),
-                        // const SizedBox(height: 20),
                       ]),
                 )
               ],

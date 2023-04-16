@@ -283,7 +283,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 "Don't have an account yet?",
                                 style: GoogleFonts.inter(
                                   fontSize: 15,
-                                  color: AppColors.textgrey,
+                                  color: AppColors.textGrey,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),

@@ -10,10 +10,11 @@ import 'package:vitalrpm/providers/user_provider.dart';
 import 'package:vitalrpm/screens/patient/measurement/add_measurement_screen.dart';
 
 class MeasurementHistoryScreen extends StatefulWidget {
-  const MeasurementHistoryScreen({Key? key, required this.type})
+  const MeasurementHistoryScreen({Key? key, required this.type, this.patientId})
       : super(key: key);
 
   final String type;
+  final String? patientId;
 
   @override
   State<MeasurementHistoryScreen> createState() =>
@@ -23,9 +24,11 @@ class MeasurementHistoryScreen extends StatefulWidget {
 class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
   // List<Map<String, dynamic>> measurementList = [];
   late UserProvider userProvider;
+  late bool isUserDoctor;
   @override
   void initState() {
     userProvider = context.read<UserProvider>();
+    isUserDoctor = userProvider.loginUser.userType.toLowerCase() == "doctor";
     initialize();
     super.initState();
   }
@@ -50,24 +53,6 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
     return lastReading;
   }
 
-  // getMeasurementsByType(String type) async {
-  //   final db = FirebaseFirestore.instance;
-  //   final measurementsRef = db.collection('measurements');
-  //   final measurements = <Map<String, dynamic>>[];
-  //   final snapshot = await measurementsRef
-  //       .where('patientId', isEqualTo: userProvider.loginUser.documentId)
-  //       .where('type', isEqualTo: type)
-  //       .orderBy('date', descending: true)
-  //       .orderBy('time', descending: true)
-  //       .get();
-  //   if (snapshot.docs.isNotEmpty) {
-  //     for (final measurement in snapshot.docs) {
-  //       measurements.add(measurement.data());
-  //     }
-  //   }
-  //   return measurements;
-  // }
-
   String _getTimeAgo(Duration duration) {
     if (duration.inSeconds < 60) {
       return '${duration.inSeconds} seconds';
@@ -81,129 +66,6 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
     return '${duration.inDays} days';
   }
 
-  // String getVitalSignStatus(type, measurement) {
-  //   switch (type) {
-  //     case 'Body Temperature':
-  //       double reading = double.parse(measurement['reading']);
-  //       if (reading < 95 || reading > 100.4) {
-  //         return 'status_critical';
-  //       } else if (reading < 97 || reading > 99) {
-  //         return 'status_warning';
-  //       } else {
-  //         return 'status_normal';
-  //       }
-  //     case 'Heart Rate':
-  //       double reading = double.parse(measurement['reading']);
-  //       if (reading < 60 || reading > 100) {
-  //         return 'status_warning';
-  //       } else if (reading < 50 || reading > 120) {
-  //         return 'critical';
-  //       } else {
-  //         return 'status_normal';
-  //       }
-  //     case 'Respiratory Rate':
-  //       double reading = double.parse(measurement['reading']);
-  //       if (reading < 12 || reading > 20) {
-  //         return 'status_warning';
-  //       } else if (reading < 8 || reading > 30) {
-  //         return 'status_critical';
-  //       } else {
-  //         return 'status_normal';
-  //       }
-  //     case 'Blood Oxygen Saturation':
-  //       double reading = double.parse(measurement['reading']);
-  //       if (reading < 95) {
-  //         return 'status_warning';
-  //       } else if (reading < 90) {
-  //         return 'status_critical';
-  //       } else {
-  //         return 'status_normal';
-  //       }
-  //     case 'Blood Pressure':
-  //       double systolic = double.parse(measurement['reading']['systolic']);
-  //       double diastolic = double.parse(measurement['reading']['diastolic']);
-  //       if (systolic < 90 ||
-  //           systolic > 120 ||
-  //           diastolic < 60 ||
-  //           diastolic > 80) {
-  //         return 'status_warning';
-  //       } else if ((systolic < 80 || systolic > 140) ||
-  //           (diastolic < 40 || diastolic > 90)) {
-  //         return 'status_critical';
-  //       } else {
-  //         return 'status_normal';
-  //       }
-  //     default:
-  //       return 'Invalid type';
-  //   }
-  // }
-
-  // String getVitalSignStatus(type, measurement) {
-  //   switch (type) {
-  //     case 'Body Temperature':
-  //       double reading = double.parse(measurement['reading']);
-  //       if (reading < 95 || reading > 100.4) {
-  //         return 'status_critical';
-  //       } else if (reading < 97.7 || reading > 99.5) {
-  //         return 'status_warning';
-  //       } else if (reading > 98.6) {
-  //         return 'status_high';
-  //       } else {
-  //         return 'status_normal';
-  //       }
-  //     case 'Heart Rate':
-  //       double reading = double.parse(measurement['reading']);
-  //       if (reading >= 60 && reading <= 100) {
-  //         return 'status_normal';
-  //       } else if (reading > 100 && reading <= 120) {
-  //         return 'status_warning';
-  //       } else if (reading < 60 || reading > 120) {
-  //         return 'status_critical';
-  //       } else {
-  //         return 'status_normal';
-  //       }
-  //     case 'Respiratory Rate':
-  //       double reading = double.parse(measurement['reading']);
-  //       if (reading < 12 || reading > 20) {
-  //         return 'status_warning';
-  //       } else if (reading < 8 || reading > 30) {
-  //         return 'status_critical';
-  //       } else if (reading > 16) {
-  //         return 'status_high';
-  //       } else {
-  //         return 'status_normal';
-  //       }
-  //     case 'Blood Oxygen Saturation':
-  //       double reading = double.parse(measurement['reading']);
-  //       if (reading < 95) {
-  //         return 'status_warning';
-  //       } else if (reading < 90) {
-  //         return 'status_critical';
-  //       } else if (reading > 98) {
-  //         return 'status_high';
-  //       } else {
-  //         return 'status_normal';
-  //       }
-  //     case 'Blood Pressure':
-  //       double systolic = double.parse(measurement['reading']['systolic']);
-  //       double diastolic = double.parse(measurement['reading']['diastolic']);
-  //       if (systolic < 120 && diastolic < 80) {
-  //         return 'status_normal';
-  //       } else if ((systolic >= 120 && systolic <= 129) && diastolic < 80) {
-  //         return 'status_warning';
-  //       } else if ((systolic >= 130 && systolic <= 139) ||
-  //           (diastolic >= 80 && diastolic <= 89)) {
-  //         return 'status_high';
-  //       } else if ((systolic >= 140 || diastolic >= 90) ||
-  //           (systolic > 180 || diastolic > 120)) {
-  //         return 'status_critical';
-  //       }
-  //       return 'status_normal';
-  //     default:
-  //       return 'Invalid type';
-  //   }
-  // }
-
   late AppLocalizations local;
 
   @override
@@ -212,7 +74,7 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
     var screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       extendBody: true,
-      backgroundColor: AppColors.darkBlue,
+      backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.blue,
         onPressed: (() => {
@@ -221,6 +83,7 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
                 MaterialPageRoute(
                   builder: (context) => AddMeasurementScreen(
                     type: widget.type,
+                    patientId: widget.patientId,
                   ),
                 ),
               ).then((value) => {
@@ -283,7 +146,7 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
                               lastReading,
                               style: GoogleFonts.inter(
                                 fontSize: 16,
-                                color: AppColors.textgrey,
+                                color: AppColors.textGrey,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -312,7 +175,7 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
                           'Measurement History',
                           style: GoogleFonts.inter(
                             fontSize: 20,
-                            color: AppColors.textblack,
+                            color: AppColors.textBlack,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -324,7 +187,7 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
                           widget.type,
                           style: GoogleFonts.inter(
                             fontSize: 15,
-                            color: AppColors.textgrey,
+                            color: AppColors.textGrey,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -333,17 +196,27 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
                           stream: FirebaseFirestore.instance
                               .collection('measurements')
                               .where('patientId',
-                                  isEqualTo: userProvider.loginUser.documentId)
+                                  isEqualTo: isUserDoctor
+                                      ? widget.patientId
+                                      : userProvider.loginUser.documentId)
                               .where('type', isEqualTo: widget.type)
                               .orderBy('date', descending: true)
                               .orderBy('time', descending: true)
                               .snapshots(),
                           builder: (context, snapshot) {
-                            if (!snapshot.hasData) {
+                            if (snapshot.data == null ||
+                                snapshot.data!.docs.isEmpty) {
                               return Container(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 15),
-                                child: const Text("No Readings Found."),
+                                child: Text(
+                                  "No Readings Found.",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 14,
+                                    color: AppColors.grey,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
                               );
                             }
                             Future.delayed(Duration.zero, () async {

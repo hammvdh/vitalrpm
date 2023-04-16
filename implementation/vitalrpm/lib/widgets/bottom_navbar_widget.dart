@@ -1,17 +1,17 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/models/user_model.dart';
 import 'package:vitalrpm/providers/user_provider.dart';
+import 'package:vitalrpm/screens/doctor/add_patients_screen.dart';
 import 'package:vitalrpm/screens/doctor/doctor_home.dart';
-import 'package:vitalrpm/screens/doctor/doctor_settings_screen.dart';
 import 'package:vitalrpm/screens/patient/assessments/assessment_history_screen.dart';
 import 'package:vitalrpm/screens/patient/measurement/add_measurement_screen.dart';
 import 'package:vitalrpm/screens/patient/patient_home.dart';
-import 'package:vitalrpm/screens/patient/patient_settings_screen.dart';
-import 'package:vitalrpm/screens/patient_details_screen.dart';
+import 'package:vitalrpm/screens/settings_screen.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   const CustomBottomNavigationBar({Key? key, this.currentPage})
@@ -43,15 +43,13 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     if (loginUser.userType.trim().toLowerCase() == 'doctor') {
       iconList = <IconData>[
         Icons.home_outlined,
-        Icons.assessment_outlined,
-        Icons.chat_bubble_outline,
+        Icons.people_alt_outlined,
         Icons.settings_outlined,
       ];
     } else {
       iconList = <IconData>[
         Icons.home_outlined,
         Icons.assessment_outlined,
-        Icons.person_outlined,
         Icons.settings_outlined,
       ];
     }
@@ -75,7 +73,7 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => const AssessmentHistoryScreen(),
+            builder: (_) => const AddPatientsScreen(),
           ),
         );
         break;
@@ -83,21 +81,7 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => const AssessmentHistoryScreen(),
-          ),
-        );
-        //  Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (_) => const PatientChatScreen(),
-        //   ),
-        // );
-        break;
-      case 3:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const DoctorSettingsScreen(),
+            builder: (_) => const SettingsScreen(),
           ),
         );
         break;
@@ -113,7 +97,7 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       case 0:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (_) => const PatientHomeDashboard(),
           ),
         );
@@ -121,7 +105,7 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       case 1:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (_) => const AssessmentHistoryScreen(),
           ),
         );
@@ -129,22 +113,8 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       case 2:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (_) => PatientProfileScreen(),
-          ),
-        );
-        //  Navigator.pushReplacement(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (_) => const PatientChatScreen(),
-        //   ),
-        // );
-        break;
-      case 3:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const PatientSettingsScreen(),
+          CupertinoPageRoute(
+            builder: (_) => const SettingsScreen(),
           ),
         );
         break;
@@ -163,7 +133,9 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         activeIndex: widget.currentPage!,
         activeColor: AppColors.darkBlue,
         inactiveColor: AppColors.grey,
-        gapLocation: GapLocation.center,
+        gapLocation: loginUser.userType.trim().toLowerCase() == 'doctor'
+            ? GapLocation.none
+            : GapLocation.end,
         notchSmoothness: NotchSmoothness.softEdge,
         onTap: (index) {
           setState(() {

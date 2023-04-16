@@ -422,7 +422,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 "Already have an account?",
                                 style: GoogleFonts.inter(
                                   fontSize: 15,
-                                  color: AppColors.textgrey,
+                                  color: AppColors.textGrey,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),

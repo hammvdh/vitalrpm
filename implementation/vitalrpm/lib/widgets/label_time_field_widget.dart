@@ -44,7 +44,7 @@ class LabelTimeFieldWidgetState extends State<LabelTimeFieldWidget> {
               widget.label,
               style: GoogleFonts.inter(
                 fontSize: 18,
-                color: AppColors.textblack,
+                color: AppColors.textBlack,
                 fontWeight: FontWeight.w600,
               ),
             ),
