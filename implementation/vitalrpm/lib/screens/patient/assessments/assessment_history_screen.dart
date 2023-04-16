@@ -111,9 +111,9 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
       await generateAssessment(
           measurements['vitals'], measurements['documents']);
       await checkCanForecast();
-      Future.delayed(Duration.zero, () async {
-        Utility.success(context, local.t("generated_assessment_successfully"));
-      });
+      // Future.delayed(Duration.zero, () async {
+      //   Utility.success(context, local.t("generated_assessment_successfully"));
+      // });
     } else {
       print("Cannot Generate");
       Future.delayed(Duration.zero, () async {
@@ -263,7 +263,6 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                             ),
                           );
                         }
-
                         return Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 15, vertical: 10),
@@ -280,7 +279,6 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                                   TimeOfDay.fromDateTime(dateTime);
                               String formattedTime =
                                   "${timeOfDay.hour < 10 ? "0" : ""}${timeOfDay.hour}:${timeOfDay.minute < 10 ? "0" : ""}${timeOfDay.minute}";
-
                               final assessmentDate =
                                   '${DateFormat.yMMMd().format(dateTime)} at $formattedTime';
                               return GestureDetector(
