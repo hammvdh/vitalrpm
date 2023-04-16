@@ -89,7 +89,7 @@ class _LabelTextFieldWidgetState extends State<LabelTextFieldWidget> {
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
-                borderSide: BorderSide(color: Colors.red, width: 1),
+                borderSide: const BorderSide(color: Colors.red, width: 1),
               ),
               focusedErrorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),

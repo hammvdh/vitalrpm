@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:vitalrpm/app_localizations.dart';
 import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/providers/user_provider.dart';
 import 'package:vitalrpm/screens/auth/auth_wrapper.dart';
 import 'package:vitalrpm/screens/auth/register_screen.dart';
-import 'package:vitalrpm/widgets/loading_overlay.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -19,7 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   late UserProvider userProvider;
-
+  late AppLocalizations local;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
-
+    local = AppLocalizations.of(context)!;
     return WillPopScope(
       onWillPop: () async {
         return false;
@@ -66,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Text(
-                        'Let’s get you started!',
+                        local.t("lets_get_you_started")!,
                         style: GoogleFonts.inter(
                           color: Colors.white,
                           fontSize: 27,
@@ -88,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: <Widget>[
                       RichText(
                         text: TextSpan(
-                          text: 'Email Address',
+                          text: local.t('email_address'),
                           style: GoogleFonts.inter(
                             color: Colors.black,
                             fontSize: 20,
@@ -121,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               textInputAction: TextInputAction.next,
                               validator: (input) {
                                 if (input!.isEmpty) {
-                                  return 'Please type email';
+                                  return local.t('please_type_email');
                                 }
                                 return null;
                               },
@@ -132,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 enabledBorder: InputBorder.none,
                                 errorBorder: InputBorder.none,
                                 disabledBorder: InputBorder.none,
-                                hintText: 'Email Address',
+                                hintText: 'email_address',
                                 hintStyle: GoogleFonts.inter(
                                   fontSize: 16,
                                   color: Colors.grey,
@@ -146,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 20.0),
                       RichText(
                         text: TextSpan(
-                          text: 'Password',
+                          text: local.t('password'),
                           style: GoogleFonts.inter(
                             color: Colors.black,
                             fontSize: 20,
@@ -179,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               textInputAction: TextInputAction.done,
                               validator: (input) {
                                 if (input!.length < 6) {
-                                  return 'Your password needs to be at least 6 characters';
+                                  return local.t('password_validation');
                                 }
                                 return null;
                               },
@@ -190,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 enabledBorder: InputBorder.none,
                                 errorBorder: InputBorder.none,
                                 disabledBorder: InputBorder.none,
-                                hintText: 'Password',
+                                hintText: 'password',
                                 hintStyle: GoogleFonts.inter(
                                   fontSize: 16,
                                   color: Colors.grey,
@@ -254,7 +254,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   horizontal: 15, vertical: 19),
                               child: Center(
                                 child: Text(
-                                  'Login',
+                                  local.t('login')!,
                                   style: GoogleFonts.inter(
                                     fontSize: 18,
                                     color: Colors.white,
@@ -280,7 +280,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Column(
                             children: [
                               Text(
-                                "Don't have an account yet?",
+                                local.t("dont_have_account")!,
                                 style: GoogleFonts.inter(
                                   fontSize: 15,
                                   color: AppColors.textGrey,
@@ -288,7 +288,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                               Text(
-                                "Register",
+                                local.t("register")!,
                                 style: GoogleFonts.inter(
                                   fontSize: 15,
                                   color: AppColors.darkBlue,

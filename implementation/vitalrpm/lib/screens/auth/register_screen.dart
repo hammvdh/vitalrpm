@@ -3,11 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:vitalrpm/app_localizations.dart';
 import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/providers/user_provider.dart';
 import 'package:vitalrpm/screens/auth/auth_wrapper.dart';
 import 'package:vitalrpm/screens/auth/login_screen.dart';
-import 'package:vitalrpm/widgets/loading_overlay.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -18,7 +18,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+  late AppLocalizations local;
   late UserProvider userProvider;
 
   final userTypeController = TextEditingController();
@@ -38,7 +38,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
-
+    local = AppLocalizations.of(context)!;
     return WillPopScope(
       onWillPop: () async {
         return false;
@@ -70,7 +70,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'User Registration',
+                        local.t('user_registration')!,
                         style: GoogleFonts.inter(
                           color: Colors.white,
                           fontSize: 27,
@@ -103,7 +103,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 10.0),
                       RichText(
                         text: TextSpan(
-                          text: 'Registering as',
+                          text: local.t('registering_as'),
                           style: GoogleFonts.inter(
                             color: Colors.black,
                             fontSize: 20,
@@ -123,8 +123,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 10.0),
                       CustomDropdown(
-                        hintText: 'Patient or Doctor?',
-                        items: const ['Patient', 'Doctor'],
+                        hintText: local.t('patient_or_doctor')!,
+                        items: [local.t('patient')!, local.t('doctor')!],
                         controller: userTypeController,
                         excludeSelected: false,
                         onChanged: (item) {},
@@ -134,7 +134,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 20.0),
                       RichText(
                         text: TextSpan(
-                          text: 'First Name',
+                          text: local.t('first_name'),
                           style: GoogleFonts.inter(
                             color: Colors.black,
                             fontSize: 20,
@@ -167,7 +167,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               textInputAction: TextInputAction.next,
                               validator: (input) {
                                 if (input!.isEmpty) {
-                                  return 'Please type a first name';
+                                  return local.t('first_name_validation');
                                 }
                                 return null;
                               },
@@ -178,7 +178,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 enabledBorder: InputBorder.none,
                                 errorBorder: InputBorder.none,
                                 disabledBorder: InputBorder.none,
-                                hintText: 'First Name',
+                                hintText: local.t('first_name'),
                                 hintStyle: GoogleFonts.inter(
                                   fontSize: 16,
                                   color: Colors.grey,
@@ -192,7 +192,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 15.0),
                       RichText(
                         text: TextSpan(
-                          text: 'Last Name',
+                          text: local.t('last_name'),
                           style: GoogleFonts.inter(
                             color: Colors.black,
                             fontSize: 20,
@@ -225,7 +225,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               textInputAction: TextInputAction.next,
                               validator: (input) {
                                 if (input!.isEmpty) {
-                                  return 'Please type a last name';
+                                  return local.t('last_name_validation');
                                 }
                                 return null;
                               },
@@ -236,7 +236,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 enabledBorder: InputBorder.none,
                                 errorBorder: InputBorder.none,
                                 disabledBorder: InputBorder.none,
-                                hintText: 'Last Name',
+                                hintText: local.t('last_name'),
                                 hintStyle: GoogleFonts.inter(
                                   fontSize: 16,
                                   color: Colors.grey,
@@ -250,7 +250,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 15.0),
                       RichText(
                         text: TextSpan(
-                          text: 'Email Address',
+                          text: local.t('email_address'),
                           style: GoogleFonts.inter(
                             color: Colors.black,
                             fontSize: 20,
@@ -283,7 +283,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               textInputAction: TextInputAction.next,
                               validator: (input) {
                                 if (input!.isEmpty) {
-                                  return 'Please type email';
+                                  return local.t('please_type_email');
                                 }
                                 return null;
                               },
@@ -294,7 +294,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 enabledBorder: InputBorder.none,
                                 errorBorder: InputBorder.none,
                                 disabledBorder: InputBorder.none,
-                                hintText: 'Email Address',
+                                hintText: local.t('email_address'),
                                 hintStyle: GoogleFonts.inter(
                                   fontSize: 16,
                                   color: Colors.grey,
@@ -308,7 +308,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 15.0),
                       RichText(
                         text: TextSpan(
-                          text: 'Password',
+                          text: local.t('password'),
                           style: GoogleFonts.inter(
                             color: Colors.black,
                             fontSize: 20,
@@ -343,7 +343,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               textInputAction: TextInputAction.done,
                               validator: (input) {
                                 if (input!.length < 6) {
-                                  return 'Your password needs to be at least 6 characters';
+                                  return local.t('password_validation');
                                 }
                                 return null;
                               },
@@ -354,7 +354,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 enabledBorder: InputBorder.none,
                                 errorBorder: InputBorder.none,
                                 disabledBorder: InputBorder.none,
-                                hintText: 'Password',
+                                hintText: local.t('password'),
                                 hintStyle: GoogleFonts.inter(
                                   fontSize: 16,
                                   color: Colors.grey,
@@ -393,7 +393,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   horizontal: 15, vertical: 19),
                               child: Center(
                                 child: Text(
-                                  'Create',
+                                  local.t('create')!,
                                   style: GoogleFonts.inter(
                                     fontSize: 18,
                                     color: Colors.white,
@@ -419,7 +419,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           child: Column(
                             children: [
                               Text(
-                                "Already have an account?",
+                                local.t("already_have_account")!,
                                 style: GoogleFonts.inter(
                                   fontSize: 15,
                                   color: AppColors.textGrey,
@@ -427,7 +427,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                               ),
                               Text(
-                                "Login",
+                                local.t("login")!,
                                 style: GoogleFonts.inter(
                                   fontSize: 15,
                                   color: AppColors.darkBlue,

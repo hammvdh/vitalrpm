@@ -11,6 +11,7 @@ import 'package:vitalrpm/screens/patient/assessments/view_assessment_screen.dart
 import 'package:vitalrpm/screens/patient/measurement/measurement_history_screen.dart';
 import 'package:vitalrpm/widgets/bottom_navbar_widget.dart';
 import 'package:vitalrpm/widgets/loading_overlay.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 
 class ViewPatientDetails extends StatefulWidget {
@@ -126,7 +127,7 @@ class _ViewPatientDetailsState extends State<ViewPatientDetails> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Patient Name",
+                          local.t("patient_name")!,
                           style: GoogleFonts.inter(
                             color: AppColors.darkBlue.withOpacity(0.5),
                             fontSize: 16,
@@ -156,10 +157,10 @@ class _ViewPatientDetailsState extends State<ViewPatientDetails> {
                         decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(8)),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 10),
                         child: Text(
-                          "Remove",
+                          local.t("remove")!,
                           style: GoogleFonts.inter(
                             fontSize: 14,
                             color: AppColors.textBlack,
@@ -193,7 +194,7 @@ class _ViewPatientDetailsState extends State<ViewPatientDetails> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: Text(
-                            'Measurements',
+                            local.t('measurements')!,
                             style: GoogleFonts.inter(
                               fontSize: 21,
                               color: AppColors.textBlack,
@@ -208,7 +209,7 @@ class _ViewPatientDetailsState extends State<ViewPatientDetails> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 10),
                         child: Text(
-                          "Loading Measurements...",
+                          local.t("loading_measurements")!,
                           style: GoogleFonts.inter(
                             fontSize: 17,
                             color: AppColors.textGrey,
@@ -325,7 +326,7 @@ class _ViewPatientDetailsState extends State<ViewPatientDetails> {
                         },
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -333,7 +334,7 @@ class _ViewPatientDetailsState extends State<ViewPatientDetails> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: Text(
-                            'Assessments',
+                            local.t('assessments')!,
                             style: GoogleFonts.inter(
                               fontSize: 21,
                               color: AppColors.textBlack,
@@ -356,7 +357,7 @@ class _ViewPatientDetailsState extends State<ViewPatientDetails> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 15),
                               child: Text(
-                                "No Assessments Found.",
+                                local.t("no_assessments_found")!,
                                 style: GoogleFonts.inter(
                                   fontSize: 14,
                                   color: AppColors.grey,
@@ -446,7 +447,7 @@ class _ViewPatientDetailsState extends State<ViewPatientDetails> {
                                           const SizedBox(height: 5),
                                           Divider(
                                             thickness: 1,
-                                            color: Color(0xFFD4D3D4)
+                                            color: const Color(0xFFD4D3D4)
                                                 .withOpacity(0.8),
                                           ),
                                           const SizedBox(height: 5),
@@ -468,7 +469,7 @@ class _ViewPatientDetailsState extends State<ViewPatientDetails> {
                                                             .start,
                                                     children: [
                                                       Text(
-                                                        "Report Type",
+                                                        local.t("report_type")!,
                                                         style:
                                                             GoogleFonts.inter(
                                                           fontSize: 14,
@@ -480,8 +481,10 @@ class _ViewPatientDetailsState extends State<ViewPatientDetails> {
                                                       Text(
                                                         assessment['type'] ==
                                                                 "status"
-                                                            ? 'Status Assessment'
-                                                            : "Predicted Status",
+                                                            ? local.t(
+                                                                'status_assessment')!
+                                                            : local.t(
+                                                                "predicted_status")!,
                                                         style:
                                                             GoogleFonts.inter(
                                                           fontSize: 16,

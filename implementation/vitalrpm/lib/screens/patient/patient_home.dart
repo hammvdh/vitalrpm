@@ -6,12 +6,10 @@ import 'package:provider/provider.dart';
 import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/const/measurement_types.dart';
 import 'package:vitalrpm/providers/user_provider.dart';
-import 'package:vitalrpm/screens/auth/auth_wrapper.dart';
 import 'package:vitalrpm/screens/patient/measurement/add_measurement_screen.dart';
 import 'package:vitalrpm/widgets/bottom_navbar_widget.dart';
 import 'package:vitalrpm/widgets/loading_overlay.dart';
 import '../../app_localizations.dart';
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import './measurement/measurement_history_screen.dart';
 
 class PatientHomeDashboard extends StatefulWidget {
@@ -143,7 +141,7 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Hello ${userProvider.loginUser.firstName}',
+                              '${local.t('hello')!} ${userProvider.loginUser.firstName}',
                               style: GoogleFonts.inter(
                                 fontSize: 18,
                                 color: AppColors.darkBlue,
@@ -153,9 +151,9 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                             SizedBox(
                               width: 250,
                               child: Text(
-                                'How are you feeling right now?',
+                                local.t('how_are_you_right_now')!,
                                 style: GoogleFonts.inter(
-                                  fontSize: 24,
+                                  fontSize: 23,
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -207,7 +205,7 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 20),
                               child: Text(
-                                'Measurements',
+                                local.t('measurements')!,
                                 style: GoogleFonts.inter(
                                   fontSize: 21,
                                   color: AppColors.textBlack,
@@ -222,7 +220,7 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 10),
                             child: Text(
-                              "Loading Measurements...",
+                              local.t("loading_measurements")!,
                               style: GoogleFonts.inter(
                                 fontSize: 17,
                                 color: AppColors.textGrey,

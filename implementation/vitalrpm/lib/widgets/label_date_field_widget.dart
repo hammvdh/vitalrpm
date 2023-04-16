@@ -1,8 +1,9 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vitalrpm/app_localizations.dart';
 import 'package:intl/intl.dart';
-import 'package:timezone/timezone.dart' as tz;
 import 'package:vitalrpm/const/color_const.dart';
 
 class LabelDateFieldWidget extends StatefulWidget {

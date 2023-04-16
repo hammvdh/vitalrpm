@@ -17,7 +17,6 @@ import 'package:vitalrpm/screens/patient/measurement/add_measurement_screen.dart
 import 'package:vitalrpm/widgets/bottom_navbar_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
-import 'package:vitalrpm/widgets/loading_overlay.dart';
 import 'package:vitalrpm/widgets/utility.dart';
 
 class AssessmentHistoryScreen extends StatefulWidget {
@@ -93,7 +92,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                   ),
                   // Some text
                   Text(
-                    'Generating Assessment',
+                    local.t('generating_assessment')!,
                     style: GoogleFonts.inter(
                       fontSize: 17,
                       color: AppColors.textBlack,
@@ -113,13 +112,12 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
           measurements['vitals'], measurements['documents']);
       await checkCanForecast();
       Future.delayed(Duration.zero, () async {
-        Utility.success(context, "Generated Assessments Successfully.");
+        Utility.success(context, local.t("generated_assessment_successfully"));
       });
     } else {
       print("Cannot Generate");
       Future.delayed(Duration.zero, () async {
-        Utility.error(context,
-            "Cannot Generate Assessments. You need at least one measurement added for each type");
+        Utility.error(context, local.t("cannot_generate_assessments"));
       });
     }
 
@@ -169,7 +167,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Assessment History",
+                          local.t("assessment_history")!,
                           style: GoogleFonts.inter(
                             fontSize: 25,
                             color: Colors.white,
@@ -178,7 +176,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                         ),
                         const SizedBox(height: 5),
                         Text(
-                          "Keep track of your health assessments",
+                          local.t("keep_track_of_assessments")!,
                           style: GoogleFonts.inter(
                             fontSize: 14,
                             color: AppColors.textGrey,
@@ -210,7 +208,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Assessments',
+                          local.t('assessments')!,
                           style: GoogleFonts.inter(
                             fontSize: 22,
                             color: AppColors.textBlack,
@@ -229,7 +227,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 15, vertical: 10),
                               child: Text(
-                                'Generate',
+                                local.t('generate')!,
                                 style: GoogleFonts.inter(
                                   fontSize: 14,
                                   color: AppColors.textWhite,
@@ -256,7 +254,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 15),
                             child: Text(
-                              "No Readings Found.",
+                              local.t("no_readings_found")!,
                               style: GoogleFonts.inter(
                                 fontSize: 14,
                                 color: AppColors.grey,
@@ -344,7 +342,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                                         const SizedBox(height: 5),
                                         Divider(
                                           thickness: 1,
-                                          color: Color(0xFFD4D3D4)
+                                          color: const Color(0xFFD4D3D4)
                                               .withOpacity(0.8),
                                         ),
                                         const SizedBox(height: 5),
@@ -365,7 +363,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      "Report Type",
+                                                      local.t("report_type")!,
                                                       style: GoogleFonts.inter(
                                                         fontSize: 14,
                                                         color: AppColors.grey,
@@ -376,8 +374,10 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                                                     Text(
                                                       assessment['type'] ==
                                                               "status"
-                                                          ? 'Status Assessment'
-                                                          : "Predicted Status",
+                                                          ? local.t(
+                                                              'status_assessment')!
+                                                          : local.t(
+                                                              "predicted_status")!,
                                                       style: GoogleFonts.inter(
                                                         fontSize: 16,
                                                         color:
@@ -453,7 +453,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
         in snapshot.docs) {
       final List vitalValue = document.get('vital_values');
 
-      if (vitalValue != null) {
+      if (vitalValue.isNotEmpty) {
         vitalValues.add(vitalValue);
         assessmentDocs.add(document.get('docId'));
       }
@@ -466,7 +466,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
   }
 
   generateForecast(assessments, docs) async {
-    String url = Environment.host + 'forecast';
+    String url = '${Environment.host}forecast';
     print(url);
     final response = await http.post(
       Uri.parse(url),
@@ -506,7 +506,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
 
   generateAssessment(vitals, docs) async {
     print("Generating Assessment");
-    String url = Environment.host + 'status';
+    String url = '${Environment.host}status';
     print(url);
     final response = await http.post(
       Uri.parse(url),

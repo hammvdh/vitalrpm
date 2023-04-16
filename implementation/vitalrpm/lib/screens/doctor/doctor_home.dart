@@ -3,9 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:vitalrpm/app_localizations.dart';
 import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/providers/user_provider.dart';
-import 'package:vitalrpm/screens/auth/auth_wrapper.dart';
 import 'package:vitalrpm/screens/doctor/view_patient_details.dart';
 import 'package:vitalrpm/widgets/bottom_navbar_widget.dart';
 
@@ -25,8 +25,11 @@ class _DoctorHomeDashboardState extends State<DoctorHomeDashboard> {
     super.initState();
   }
 
+  late AppLocalizations local;
+
   @override
   Widget build(BuildContext context) {
+    local = AppLocalizations.of(context)!;
     return Scaffold(
       bottomNavigationBar: const CustomBottomNavigationBar(currentPage: 0),
       body: SafeArea(
@@ -52,7 +55,7 @@ class _DoctorHomeDashboardState extends State<DoctorHomeDashboard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Welcome!',
+                            local.t('welcome')!,
                             style: GoogleFonts.inter(
                               fontSize: 18,
                               color: AppColors.darkBlue,
@@ -97,7 +100,7 @@ class _DoctorHomeDashboardState extends State<DoctorHomeDashboard> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                 child: Text(
-                  "Patient List",
+                  local.t("patient_list")!,
                   style: GoogleFonts.inter(
                     fontSize: 20,
                     color: AppColors.textBlack,
@@ -118,7 +121,7 @@ class _DoctorHomeDashboardState extends State<DoctorHomeDashboard> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 15),
                         child: Text(
-                          "No Patients Added.",
+                          local.t("no_patients_available")!,
                           style: GoogleFonts.inter(
                             fontSize: 14,
                             color: AppColors.grey,

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:vitalrpm/app_localizations.dart';
 import 'package:vitalrpm/const/color_const.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:vitalrpm/const/measurement_types.dart';
@@ -63,8 +64,11 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
     }
   }
 
+  late AppLocalizations local;
+
   @override
   Widget build(BuildContext context) {
+    local = AppLocalizations.of(context)!;
     var screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: AppColors.darkBlue,
@@ -103,7 +107,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Text(
-                                'Add Measurement',
+                                local.t('add_measurement')!,
                                 style: GoogleFonts.inter(
                                   fontSize: 22,
                                   color: Colors.white,
@@ -114,7 +118,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                               SizedBox(
                                 width: screenWidth / 1.4,
                                 child: Text(
-                                  'Keep track of your health vital sign measurements',
+                                  local.t('keep_track_of_measurements')!,
                                   style: GoogleFonts.inter(
                                     fontSize: 14,
                                     color: AppColors.textGrey,
@@ -144,7 +148,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                         children: [
                           const SizedBox(height: 20),
                           Text(
-                            'Measurement Type',
+                            local.t('measurement_type')!,
                             style: GoogleFonts.inter(
                               fontSize: 18,
                               color: AppColors.textBlack,
@@ -153,7 +157,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                           ),
                           const SizedBox(height: 10),
                           CustomDropdown.search(
-                            hintText: 'Select Measurement Type',
+                            hintText: local.t('select_measurement_type')!,
                             items: MeasurementTypes.measurementTypes,
                             controller: measurementTypeController,
                             excludeSelected: false,
@@ -192,7 +196,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                       controller: readingController,
                                       isRequired: true,
                                       maxLength: 3,
-                                      hintText: "Enter a value.",
+                                      hintText: local.t("enter_value")!,
                                       suffixText: "bpm",
                                       textInputType: TextInputType.number,
                                     ),
@@ -211,7 +215,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                       controller: readingController,
                                       isRequired: true,
                                       maxLength: 5,
-                                      hintText: "Enter a value.",
+                                      hintText: local.t("enter_value")!,
                                       suffixText: "%",
                                       textInputType: TextInputType.number,
                                     ),
@@ -230,7 +234,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                       controller: readingController,
                                       isRequired: true,
                                       maxLength: 5,
-                                      hintText: "Enter a value.",
+                                      hintText: local.t("enter_value")!,
                                       suffixText: "bpm",
                                       textInputType: TextInputType.number,
                                     ),
@@ -249,7 +253,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                       controller: readingController,
                                       isRequired: true,
                                       maxLength: 5,
-                                      hintText: "Enter a value.",
+                                      hintText: local.t("enter_value")!,
                                       suffixText: "°F",
                                       textInputType: TextInputType.number,
                                     ),
@@ -264,9 +268,9 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                 children: [
                                   Flexible(
                                     child: LabelTextFieldWidget(
-                                      label: "Systolic",
+                                      label: local.t("systolic")!,
                                       controller: sysController,
-                                      hintText: "Systolic Value",
+                                      hintText: local.t("enter_value")!,
                                       isRequired: true,
                                       maxLength: 5,
                                       suffixText: "mmHg",
@@ -276,9 +280,9 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                   const SizedBox(width: 10),
                                   Flexible(
                                     child: LabelTextFieldWidget(
-                                      label: "Diastolic",
+                                      label: local.t("diastolic")!,
                                       controller: diaController,
-                                      hintText: "Diastolic Value",
+                                      hintText: local.t("enter_value")!,
                                       isRequired: true,
                                       maxLength: 5,
                                       suffixText: "mmHg",
@@ -293,7 +297,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                               children: [
                                 Flexible(
                                   child: LabelDateFieldWidget(
-                                    label: "Reading Date",
+                                    label: local.t("reading_date")!,
                                     initialDate: DateTime.now(),
                                     isLastDateToday: true,
                                     onSelected: (DateTime date) {
@@ -304,7 +308,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                 const SizedBox(width: 10),
                                 Flexible(
                                   child: LabelTimeFieldWidget(
-                                    label: "Reading Time",
+                                    label: local.t("reading_time")!,
                                     value:
                                         "${TimeOfDay.now().hour < 10 ? "0" : ""}${TimeOfDay.now().hour}:${TimeOfDay.now().minute < 10 ? "0" : ""}${TimeOfDay.now().minute}",
                                     onSelected: (String time) {
@@ -318,7 +322,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                             Row(
                               children: [
                                 Text(
-                                  'Meals',
+                                  local.t('meals')!,
                                   style: GoogleFonts.inter(
                                     fontSize: 18,
                                     color: AppColors.textBlack,
@@ -338,10 +342,10 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                             const SizedBox(height: 10),
                             CustomDropdown(
                               hintText: 'Before or After Meals?',
-                              items: const [
-                                'Before Meals',
-                                'After Meals',
-                                'Not Applicable'
+                              items: [
+                                local.t('before_meals')!,
+                                local.t('after_meals')!,
+                                local.t('not_applicable')!
                               ],
                               controller: mealsController,
                               // excludeSelected: false,
@@ -351,7 +355,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                             ),
                             const SizedBox(height: 20),
                             Text(
-                              'Notes',
+                              local.t('notes')!,
                               style: GoogleFonts.inter(
                                 fontSize: 18,
                                 color: AppColors.textBlack,
@@ -359,7 +363,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                               ),
                             ),
                             Text(
-                              'Anything you would like the doctor to know?',
+                              local.t('anything_wanna_know')!,
                               style: GoogleFonts.inter(
                                 fontSize: 16,
                                 color: AppColors.grey,
@@ -373,7 +377,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                 Flexible(
                                   child: LabelTextFieldWidget(
                                     label: "",
-                                    hintText: "Add a note",
+                                    hintText: local.t("add_note")!,
                                     controller: notesController,
                                     isRequired: false,
                                     textInputType: TextInputType.text,
@@ -399,7 +403,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        'Cancel',
+                                        local.t('cancel')!,
                                         style: GoogleFonts.inter(
                                           fontSize: 18,
                                           color: AppColors.textWhite,
@@ -423,7 +427,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        'Save',
+                                        local.t('save')!,
                                         style: GoogleFonts.inter(
                                           fontSize: 18,
                                           color: AppColors.textWhite,
@@ -463,7 +467,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
 
     if (type == "Blood Pressure") {
       if (systolic.isEmpty || diastolic.isEmpty) {
-        print("Systolic and diastolic values are required.");
+        print("bp_validation");
         return;
       }
     } else {

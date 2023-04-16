@@ -46,8 +46,8 @@ class SplashScreenState extends State<SplashScreen> {
   Future<void> checkPreferences() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     Locale temp;
-    if (prefs.containsKey(StorageKeys.LanguageCode)) {
-      final String? languageCode = prefs.getString(StorageKeys.LanguageCode);
+    if (prefs.containsKey(StorageKeys.languageCode)) {
+      final String? languageCode = prefs.getString(StorageKeys.languageCode);
       if (languageCode == "si") {
         temp = const Locale("si", "LK");
       } else {

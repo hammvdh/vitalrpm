@@ -1,15 +1,16 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:vitalrpm/app_localizations.dart';
 import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/models/user_model.dart';
 import 'package:vitalrpm/providers/user_provider.dart';
 import 'package:vitalrpm/screens/auth/auth_wrapper.dart';
 import 'package:vitalrpm/screens/change_language_screen.dart';
+import 'package:vitalrpm/screens/page_unavailable_screen.dart';
 import 'package:vitalrpm/widgets/bottom_navbar_widget.dart';
 import 'package:vitalrpm/widgets/loading_overlay.dart';
-
-import 'patient/measurement/add_measurement_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -21,6 +22,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   late UserProvider userProvider;
   late UserModel loginUser;
+  late AppLocalizations local;
 
   @override
   void initState() {
@@ -31,6 +33,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    local = AppLocalizations.of(context)!;
     var screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       bottomNavigationBar: const CustomBottomNavigationBar(currentPage: 2),
@@ -51,7 +54,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'User Settings',
+                        local.t('user_settings')!,
                         style: GoogleFonts.inter(
                           color: Colors.white,
                           fontSize: 25,
@@ -83,13 +86,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         LoadingOverlay.of(context).hide();
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(
+                          CupertinoPageRoute(
                             builder: (context) => const AuthenticationWrapper(),
                           ),
                         );
                       },
                       child: Text(
-                        "Log Out",
+                        local.t("log_out")!,
                         style: GoogleFonts.inter(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
@@ -105,25 +108,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => ChangeLanguageScreen(),
+                    CupertinoPageRoute(
+                      builder: (context) => const PageUnavailableScreen(),
                     ),
                   );
                 },
                 child: Container(
                   // margin: EdgeInsets.symmetric(horizontal: 15),
                   height: 80,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Color.fromARGB(255, 224, 231, 238),
                     // borderRadius: BorderRadius.circular(10),
                   ),
                   child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "User Profile Settings",
+                          local.t("user_profile_settings")!,
                           style: GoogleFonts.inter(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -144,25 +147,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => ChangeLanguageScreen(),
+                    CupertinoPageRoute(
+                      builder: (context) => const PageUnavailableScreen(),
                     ),
                   );
                 },
                 child: Container(
                   // margin: EdgeInsets.symmetric(horizontal: 15),
                   height: 80,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Color.fromARGB(255, 237, 243, 248),
                     // borderRadius: BorderRadius.circular(10),
                   ),
                   child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Notification Settings",
+                          local.t("notification_settings")!,
                           style: GoogleFonts.inter(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -184,25 +187,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => ChangeLanguageScreen(),
+                    CupertinoPageRoute(
+                      builder: (context) => const ChangeLanguageScreen(),
                     ),
                   );
                 },
                 child: Container(
                   // margin: EdgeInsets.symmetric(horizontal: 15),
                   height: 80,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Color.fromARGB(255, 224, 231, 238),
                     // borderRadius: BorderRadius.circular(10),
                   ),
                   child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Language Settings",
+                          local.t("language_settings")!,
                           style: GoogleFonts.inter(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -224,25 +227,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => ChangeLanguageScreen(),
+                    CupertinoPageRoute(
+                      builder: (context) => const PageUnavailableScreen(),
                     ),
                   );
                 },
                 child: Container(
                   // margin: EdgeInsets.symmetric(horizontal: 15),
                   height: 80,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Color.fromARGB(255, 237, 243, 248),
                     // borderRadius: BorderRadius.circular(10),
                   ),
                   child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Help & Support",
+                          local.t("help_and_support")!,
                           style: GoogleFonts.inter(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -264,25 +267,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => ChangeLanguageScreen(),
+                    CupertinoPageRoute(
+                      builder: (context) => const PageUnavailableScreen(),
                     ),
                   );
                 },
                 child: Container(
                   // margin: EdgeInsets.symmetric(horizontal: 15),
                   height: 80,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Color.fromARGB(255, 224, 231, 238),
                     // borderRadius: BorderRadius.circular(10),
                   ),
                   child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Privacy Policy & Terms of Service",
+                          local.t("terms_of_service")!,
                           style: GoogleFonts.inter(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,

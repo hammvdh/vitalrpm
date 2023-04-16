@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vitalrpm/app_localizations.dart';
 import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/const/storage_keys.dart';
 import 'package:vitalrpm/main.dart';
@@ -12,7 +13,7 @@ import 'package:vitalrpm/models/entity_model.dart';
 import '../../../../providers/common_provider.dart';
 
 class ChangeLanguageScreen extends StatefulWidget {
-  ChangeLanguageScreen({this.loginUser});
+  const ChangeLanguageScreen({Key? key, this.loginUser}) : super(key: key);
 
   final User? loginUser;
 
@@ -22,7 +23,7 @@ class ChangeLanguageScreen extends StatefulWidget {
 
 class ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
   Entity? _selectedLanguage;
-
+  late AppLocalizations local;
   @override
   void initState() {
     _selectedLanguage = context.read<CommonProvider>().selectedLanguage;
@@ -34,10 +35,10 @@ class ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
     Locale temp;
     if (languageItem.code == "si") {
       temp = const Locale("si", "LK");
-      prefs.setString(StorageKeys.LanguageCode, "ar");
+      prefs.setString(StorageKeys.languageCode, "ar");
     } else {
       temp = const Locale("en", "US");
-      prefs.setString(StorageKeys.LanguageCode, "en");
+      prefs.setString(StorageKeys.languageCode, "en");
     }
     context.read<CommonProvider>().setLanguage(_selectedLanguage!);
     MyApp.setLocale(context, temp);
@@ -45,44 +46,71 @@ class ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var screenWidth = MediaQuery.of(context).size.width;
+    local = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          padding: const EdgeInsets.only(left: 20),
-          icon: const Icon(Icons.arrow_back),
-          iconSize: 37,
-          color: Colors.black87,
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          "change_language",
-          style: GoogleFonts.inter(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textBlack,
-          ),
-        ),
-        elevation: 0,
-        toolbarHeight: 70,
-        backgroundColor: Colors.white,
-      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Container(
+                decoration: BoxDecoration(color: AppColors.textWhite),
+                height: 70,
+                width: screenWidth,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.chevron_left,
+                          color: AppColors.textBlack,
+                          size: 29,
+                        ),
+                        Text(
+                          local.t('back')!,
+                          style: GoogleFonts.inter(
+                            color: AppColors.textBlack,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 padding: const EdgeInsets.only(top: 20),
                 child: Text(
-                  "select_language",
+                  local.t("select_language")!,
                   style: GoogleFonts.inter(
-                    fontSize: 30,
+                    fontSize: 27,
                     fontWeight: FontWeight.w700,
                     color: AppColors.textBlack,
                   ),
                 ),
               ),
-              const SizedBox(height: 30),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.only(top: 10),
+                child: Text(
+                  local.t("update_language")!,
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textGrey,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
               Column(
                 children:
                     context.read<CommonProvider>().languageList.map((item) {

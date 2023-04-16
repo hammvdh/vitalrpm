@@ -1,3 +1,3 @@
 class StorageKeys {
-  static const LanguageCode = 'LanguageCode';
+  static const languageCode = 'LanguageCode';
 }

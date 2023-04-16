@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:vitalrpm/app_localizations.dart';
 import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/models/user_model.dart';
 import 'package:vitalrpm/providers/user_provider.dart';
@@ -18,7 +19,7 @@ class _AddPatientsScreenState extends State<AddPatientsScreen> {
   List<DocumentSnapshot> _users = [];
   late UserProvider userProvider;
   late UserModel loginUser;
-
+  late AppLocalizations local;
   @override
   void initState() {
     userProvider = context.read<UserProvider>();
@@ -55,6 +56,7 @@ class _AddPatientsScreenState extends State<AddPatientsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    local = AppLocalizations.of(context)!;
     var screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       bottomNavigationBar: const CustomBottomNavigationBar(currentPage: 1),
@@ -74,7 +76,7 @@ class _AddPatientsScreenState extends State<AddPatientsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Add Patients',
+                    local.t('add_patients')!,
                     style: GoogleFonts.inter(
                       color: Colors.white,
                       fontSize: 25,
@@ -89,7 +91,7 @@ class _AddPatientsScreenState extends State<AddPatientsScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             child: Text(
-              "Available Patients",
+              local.t("available_patients")!,
               style: GoogleFonts.inter(
                 fontSize: 20,
                 color: AppColors.textBlack,
@@ -101,7 +103,7 @@ class _AddPatientsScreenState extends State<AddPatientsScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Text(
-                "No Patients Available.",
+                local.t("no_patients_available")!,
                 style: GoogleFonts.inter(
                   fontSize: 14,
                   color: AppColors.grey,
@@ -148,7 +150,7 @@ class _AddPatientsScreenState extends State<AddPatientsScreen> {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                           Text(
                             user['emailAddress'],
                             style: GoogleFonts.inter(
@@ -171,10 +173,10 @@ class _AddPatientsScreenState extends State<AddPatientsScreen> {
                           decoration: BoxDecoration(
                               color: AppColors.blue,
                               borderRadius: BorderRadius.circular(8)),
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 10),
                           child: Text(
-                            "Add",
+                            local.t("add")!,
                             style: GoogleFonts.inter(
                               fontSize: 14,
                               color: AppColors.textWhite,

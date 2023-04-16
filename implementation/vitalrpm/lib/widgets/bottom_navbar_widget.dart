@@ -141,7 +141,7 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         notchSmoothness: NotchSmoothness.softEdge,
         onTap: (index) {
           setState(() {
-            if (widget.currentPage != '') {
+            if (widget.currentPage != null) {
               if (loginUser.userType.trim().toLowerCase() == 'doctor') {
                 _navigateDoctor(index);
               } else {

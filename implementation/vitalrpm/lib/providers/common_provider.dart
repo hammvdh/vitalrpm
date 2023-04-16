@@ -23,9 +23,9 @@ class CommonProvider extends ChangeNotifier {
       parentId: 0,
     ));
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.containsKey(StorageKeys.LanguageCode)) {
+    if (prefs.containsKey(StorageKeys.languageCode)) {
       for (Entity item in languageList) {
-        if (item.code == StorageKeys.LanguageCode) {
+        if (item.code == StorageKeys.languageCode) {
           setLanguage(item);
         }
       }

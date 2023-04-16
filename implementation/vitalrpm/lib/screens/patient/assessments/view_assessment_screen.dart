@@ -104,19 +104,6 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
     return lastMeasurements;
   }
 
-  String _getTimeAgo(Duration duration) {
-    if (duration.inSeconds < 60) {
-      return '${duration.inSeconds} seconds';
-    } else if (duration.inMinutes < 60) {
-      return '${duration.inMinutes} minutes';
-    } else if (duration.inHours < 24) {
-      return '${duration.inHours} hours';
-    } else if (duration.inDays < 30) {
-      return '${duration.inDays} days';
-    }
-    return '${duration.inDays} days';
-  }
-
   @override
   Widget build(BuildContext context) {
     // Top Bar
@@ -162,19 +149,19 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                         children: [
                           Text(
                             widget.assessment['type'] == "status"
-                                ? "Status Assessment"
-                                : "Forecast Assessment",
+                                ? local.t("status_assessment")!
+                                : local.t("forecast_assessment")!,
                             style: GoogleFonts.inter(
                               fontSize: 26,
                               color: Colors.white,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                           Text(
                             widget.assessment['type'] == "status"
-                                ? 'Health Status Assessment'
-                                : "Health Status Forecast",
+                                ? local.t('health_status_assessment')!
+                                : local.t("health_status_forecast")!,
                             style: GoogleFonts.inter(
                               fontSize: 16,
                               color: AppColors.textGrey,
@@ -184,7 +171,7 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 15),
+                    const SizedBox(height: 15),
                     Container(
                       width: screenWidth / 1.1,
                       height: 70,
@@ -200,8 +187,8 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                           children: [
                             Text(
                               widget.assessment['type'] == "status"
-                                  ? "Health Status"
-                                  : "Forecasted Status",
+                                  ? local.t("health_status")!
+                                  : local.t("forecasted_status")!,
                               style: GoogleFonts.inter(
                                 fontSize: 15,
                                 color: Colors.black.withOpacity(0.6),
@@ -220,7 +207,7 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                   ]),
             ),
             Container(
@@ -236,11 +223,11 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Text(
-                        'Assessment Date',
+                        local.t('assessment_date')!,
                         style: GoogleFonts.inter(
                           fontSize: 20,
                           color: AppColors.textBlack,
@@ -260,12 +247,12 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 15),
+                    const SizedBox(height: 15),
                     if (widget.assessment['type'] == "status") ...[
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Vital Sign Measurements',
+                          local.t('measurements')!,
                           style: GoogleFonts.inter(
                             fontSize: 20,
                             color: AppColors.textBlack,
@@ -280,8 +267,6 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                           primary: false,
                           itemCount: vitals.length,
                           itemBuilder: (context, index) {
-                            final type =
-                                MeasurementTypes.measurementTypes[index];
                             final item = vitals[index];
                             return Container(
                               margin: const EdgeInsets.only(top: 10),
@@ -362,7 +347,7 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Forecasted Vital Signs',
+                          local.t('forecasted_vital_signs')!,
                           style: GoogleFonts.inter(
                             fontSize: 20,
                             color: AppColors.textBlack,
@@ -406,7 +391,7 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                                   ),
                                 ),
                                 Text(
-                                  '$value',
+                                  value,
                                   style: GoogleFonts.inter(
                                     fontSize: 15,
                                     color: AppColors.blue,
@@ -419,11 +404,11 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                           // return Text('$measurementType: $value');
                         }).toList(),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Status Assessments Used',
+                          local.t('status_assessments_used')!,
                           style: GoogleFonts.inter(
                             fontSize: 20,
                             color: AppColors.textBlack,
@@ -507,8 +492,8 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                                       const SizedBox(height: 5),
                                       Divider(
                                         thickness: 1,
-                                        color:
-                                            Color(0xFFD4D3D4).withOpacity(0.8),
+                                        color: const Color(0xFFD4D3D4)
+                                            .withOpacity(0.8),
                                       ),
                                       const SizedBox(height: 5),
                                       Row(
@@ -528,7 +513,7 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    "Report Type",
+                                                    local.t("report_type")!,
                                                     style: GoogleFonts.inter(
                                                       fontSize: 14,
                                                       color: AppColors.grey,
@@ -539,8 +524,10 @@ class _ViewAssessmentsScreenState extends State<ViewAssessmentsScreen> {
                                                   Text(
                                                     assessment['type'] ==
                                                             "status"
-                                                        ? 'Status Assessment'
-                                                        : "Predicted Status",
+                                                        ? local.t(
+                                                            'status_assessment')!
+                                                        : local.t(
+                                                            "predicted_status")!,
                                                     style: GoogleFonts.inter(
                                                       fontSize: 16,
                                                       color: AppColors.darkBlue,

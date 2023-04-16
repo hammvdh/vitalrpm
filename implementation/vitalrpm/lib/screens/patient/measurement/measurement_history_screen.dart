@@ -36,8 +36,6 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
   var lastReading = '';
 
   initialize() async {
-    // measurementList = await getMeasurementsByType(widget.type);
-    // lastReading = getLastReading();
     setState(() {});
   }
 
@@ -141,7 +139,7 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            SizedBox(height: 5),
+                            const SizedBox(height: 5),
                             Text(
                               lastReading,
                               style: GoogleFonts.inter(
@@ -172,7 +170,7 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Measurement History',
+                          local.t('measurement_history')!,
                           style: GoogleFonts.inter(
                             fontSize: 20,
                             color: AppColors.textBlack,
@@ -210,7 +208,7 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 15),
                                 child: Text(
-                                  "No Readings Found.",
+                                  local.t("no_readings_found")!,
                                   style: GoogleFonts.inter(
                                     fontSize: 14,
                                     color: AppColors.grey,
@@ -243,7 +241,7 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
                                     decoration: BoxDecoration(
                                         border: Border.all(
                                           width: 1,
-                                          color: Color(0xFFD4D3D4)
+                                          color: const Color(0xFFD4D3D4)
                                               .withOpacity(0.8),
                                         ),
                                         borderRadius: BorderRadius.circular(10),
@@ -307,7 +305,7 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
                                           const SizedBox(height: 5),
                                           Divider(
                                             thickness: 1,
-                                            color: Color(0xFFD4D3D4)
+                                            color: const Color(0xFFD4D3D4)
                                                 .withOpacity(0.8),
                                           ),
                                           const SizedBox(height: 5),
@@ -329,7 +327,7 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
                                                               .start,
                                                       children: [
                                                         Text(
-                                                          'Systolic',
+                                                          local.t('systolic')!,
                                                           style:
                                                               GoogleFonts.inter(
                                                             fontSize: 15,
@@ -359,7 +357,7 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
                                                               .start,
                                                       children: [
                                                         Text(
-                                                          'Diastolic',
+                                                          local.t('diastolic')!,
                                                           style:
                                                               GoogleFonts.inter(
                                                             fontSize: 15,
@@ -395,7 +393,7 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
                                                               .start,
                                                       children: [
                                                         Text(
-                                                          'Reading',
+                                                          local.t('reading')!,
                                                           style:
                                                               GoogleFonts.inter(
                                                             fontSize: 15,
@@ -421,7 +419,6 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
                                                   ],
                                                 ),
                                               ],
-                                              // TODO - WORK ON & ADD BELOW CODE WHEN VITAL RANGE DECIDED
                                               Container(
                                                 decoration: BoxDecoration(
                                                   color: getStatusColor(status)
@@ -457,231 +454,6 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
                               ),
                             );
                           }),
-                      // if (measurementList.isEmpty) ...[
-                      //   Column(
-                      //     children: [
-                      //       Container(
-                      //         padding: const EdgeInsets.symmetric(
-                      //             horizontal: 20, vertical: 15),
-                      //         child: Text("No Readings Found."),
-                      //       ),
-                      //     ],
-                      //   )
-                      // ] else ...[
-                      //   Padding(
-                      //     padding: const EdgeInsets.symmetric(horizontal: 15),
-                      //     child: ListView.builder(
-                      //       shrinkWrap: true,
-                      //       primary: false,
-                      //       itemCount: measurementList.length,
-                      //       itemBuilder: (context, index) {
-                      //         final measurement = measurementList[index];
-                      //         final status = getVitalSignStatus(
-                      //             measurement['type'], measurement);
-                      //         return Container(
-                      //           margin: const EdgeInsets.only(top: 10),
-                      //           decoration: BoxDecoration(
-                      //               border: Border.all(
-                      //                 width: 1,
-                      //                 color: Color(0xFFD4D3D4).withOpacity(0.8),
-                      //               ),
-                      //               borderRadius: BorderRadius.circular(10),
-                      //               color: Colors.white,
-                      //               boxShadow: const [
-                      //                 BoxShadow(
-                      //                     color: Color(0xFFDEE2E5),
-                      //                     offset: Offset(0, 20),
-                      //                     blurRadius: 10)
-                      //               ]),
-                      //           height: 115,
-                      //           child: Padding(
-                      //             padding: const EdgeInsets.symmetric(
-                      //                 horizontal: 15, vertical: 10),
-                      //             child: Column(
-                      //               children: [
-                      //                 Row(
-                      //                   mainAxisAlignment:
-                      //                       MainAxisAlignment.spaceBetween,
-                      //                   crossAxisAlignment:
-                      //                       CrossAxisAlignment.start,
-                      //                   children: [
-                      //                     Row(
-                      //                       mainAxisAlignment:
-                      //                           MainAxisAlignment.start,
-                      //                       children: [
-                      //                         Text(
-                      //                           DateFormat.yMMMd().format(
-                      //                               DateTime.parse(
-                      //                                   measurement['date'])),
-                      //                           style: GoogleFonts.inter(
-                      //                             fontSize: 16,
-                      //                             color:
-                      //                                 const Color(0XFF565555),
-                      //                             fontWeight: FontWeight.w500,
-                      //                           ),
-                      //                         ),
-                      //                         const SizedBox(width: 20),
-                      //                         Text(
-                      //                           measurement['time'],
-                      //                           style: GoogleFonts.inter(
-                      //                             fontSize: 16,
-                      //                             color:
-                      //                                 const Color(0XFF565555),
-                      //                             fontWeight: FontWeight.w400,
-                      //                           ),
-                      //                         ),
-                      //                       ],
-                      //                     ),
-                      //                     const SizedBox()
-                      //                     // Icon(
-                      //                     //   Icons.chevron_right,
-                      //                     //   color: AppColors.darkBlue,
-                      //                     //   size: 21,
-                      //                     // )
-                      //                   ],
-                      //                 ),
-                      //                 const SizedBox(height: 5),
-                      //                 Divider(
-                      //                   thickness: 1,
-                      //                   color:
-                      //                       Color(0xFFD4D3D4).withOpacity(0.8),
-                      //                 ),
-                      //                 const SizedBox(height: 5),
-                      //                 Row(
-                      //                   mainAxisAlignment:
-                      //                       MainAxisAlignment.spaceBetween,
-                      //                   crossAxisAlignment:
-                      //                       CrossAxisAlignment.center,
-                      //                   children: [
-                      //                     if (widget.type ==
-                      //                         "Blood Pressure") ...[
-                      //                       Row(
-                      //                         mainAxisAlignment:
-                      //                             MainAxisAlignment.center,
-                      //                         children: [
-                      //                           Column(
-                      //                             crossAxisAlignment:
-                      //                                 CrossAxisAlignment.start,
-                      //                             children: [
-                      //                               Text(
-                      //                                 'Systolic',
-                      //                                 style: GoogleFonts.inter(
-                      //                                   fontSize: 15,
-                      //                                   color: const Color(
-                      //                                       0XFF565555),
-                      //                                   fontWeight:
-                      //                                       FontWeight.w400,
-                      //                                 ),
-                      //                               ),
-                      //                               Text(
-                      //                                 '${measurement['reading']['systolic']} ${measurement['unit']}',
-                      //                                 style: GoogleFonts.inter(
-                      //                                   fontSize: 17,
-                      //                                   color:
-                      //                                       AppColors.darkBlue,
-                      //                                   fontWeight:
-                      //                                       FontWeight.w600,
-                      //                                 ),
-                      //                               ),
-                      //                             ],
-                      //                           ),
-                      //                           const SizedBox(width: 20),
-                      //                           Column(
-                      //                             crossAxisAlignment:
-                      //                                 CrossAxisAlignment.start,
-                      //                             children: [
-                      //                               Text(
-                      //                                 'Diastolic',
-                      //                                 style: GoogleFonts.inter(
-                      //                                   fontSize: 15,
-                      //                                   color: const Color(
-                      //                                       0XFF565555),
-                      //                                   fontWeight:
-                      //                                       FontWeight.w400,
-                      //                                 ),
-                      //                               ),
-                      //                               Text(
-                      //                                 '${measurement['reading']['diastolic']} ${measurement['unit']}',
-                      //                                 style: GoogleFonts.inter(
-                      //                                   fontSize: 17,
-                      //                                   color:
-                      //                                       AppColors.darkBlue,
-                      //                                   fontWeight:
-                      //                                       FontWeight.w600,
-                      //                                 ),
-                      //                               ),
-                      //                             ],
-                      //                           ),
-                      //                         ],
-                      //                       ),
-                      //                     ] else ...[
-                      //                       Row(
-                      //                         mainAxisAlignment:
-                      //                             MainAxisAlignment.center,
-                      //                         children: [
-                      //                           Column(
-                      //                             crossAxisAlignment:
-                      //                                 CrossAxisAlignment.start,
-                      //                             children: [
-                      //                               Text(
-                      //                                 'Reading',
-                      //                                 style: GoogleFonts.inter(
-                      //                                   fontSize: 15,
-                      //                                   color: const Color(
-                      //                                       0XFF565555),
-                      //                                   fontWeight:
-                      //                                       FontWeight.w400,
-                      //                                 ),
-                      //                               ),
-                      //                               Text(
-                      //                                 '${measurement['reading']} ${measurement['unit']}',
-                      //                                 style: GoogleFonts.inter(
-                      //                                   fontSize: 17,
-                      //                                   color:
-                      //                                       AppColors.darkBlue,
-                      //                                   fontWeight:
-                      //                                       FontWeight.w600,
-                      //                                 ),
-                      //                               ),
-                      //                             ],
-                      //                           ),
-                      //                         ],
-                      //                       ),
-                      //                     ],
-                      //                     // TODO - WORK ON & ADD BELOW CODE WHEN VITAL RANGE DECIDED
-                      //                     Container(
-                      //                       decoration: BoxDecoration(
-                      //                         color: getStatusColor(status)
-                      //                             .withOpacity(0.2),
-                      //                         borderRadius:
-                      //                             BorderRadius.circular(20),
-                      //                         border: Border.all(
-                      //                             width: 0.8,
-                      //                             color:
-                      //                                 getStatusColor(status)),
-                      //                       ),
-                      //                       padding: const EdgeInsets.symmetric(
-                      //                           horizontal: 12, vertical: 4),
-                      //                       child: Text(
-                      //                         local.t(status)!,
-                      //                         style: GoogleFonts.inter(
-                      //                           fontSize: 14,
-                      //                           color: getStatusColor(status),
-                      //                           fontWeight: FontWeight.w600,
-                      //                         ),
-                      //                       ),
-                      //                     ),
-                      //                   ],
-                      //                 )
-                      //               ],
-                      //             ),
-                      //           ),
-                      //         );
-                      //       },
-                      //     ),
-                      //   ),
-                      //   const SizedBox(height: 90),
-                      // ]
                     ]),
               ),
             ]),
