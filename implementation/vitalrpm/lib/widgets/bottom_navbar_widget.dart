@@ -64,7 +64,7 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       case 0:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (_) => const DoctorHomeDashboard(),
           ),
         );
@@ -72,7 +72,7 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       case 1:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (_) => const AddPatientsScreen(),
           ),
         );
@@ -80,7 +80,7 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       case 2:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (_) => const SettingsScreen(),
           ),
         );
@@ -179,7 +179,7 @@ class _CustomFloatingActionButtonState
       onPressed: (() => {
             Navigator.push(
               context,
-              MaterialPageRoute(
+              CupertinoPageRoute(
                 builder: (context) => const AddMeasurementScreen(),
               ),
             ).then((value) => {onClicked})

@@ -132,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 enabledBorder: InputBorder.none,
                                 errorBorder: InputBorder.none,
                                 disabledBorder: InputBorder.none,
-                                hintText: 'email_address',
+                                hintText: local.t('email_address'),
                                 hintStyle: GoogleFonts.inter(
                                   fontSize: 16,
                                   color: Colors.grey,
@@ -190,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 enabledBorder: InputBorder.none,
                                 errorBorder: InputBorder.none,
                                 disabledBorder: InputBorder.none,
-                                hintText: 'password',
+                                hintText: local.t('password'),
                                 hintStyle: GoogleFonts.inter(
                                   fontSize: 16,
                                   color: Colors.grey,

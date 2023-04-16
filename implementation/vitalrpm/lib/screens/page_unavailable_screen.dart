@@ -100,11 +100,11 @@ class _PageUnavailableScreenState extends State<PageUnavailableScreen> {
                   child: Text(
                     local.t('pnf_desc')!,
                     style: GoogleFonts.inter(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textGrey,
-                    ),
-                    textAlign: TextAlign.center,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textGrey,
+                        height: 1.5),
+                    textAlign: TextAlign.left,
                   ))
             ]),
       )),
