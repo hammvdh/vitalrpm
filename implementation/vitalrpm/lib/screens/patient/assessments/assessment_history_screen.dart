@@ -111,14 +111,9 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
       await generateAssessment(
           measurements['vitals'], measurements['documents']);
       await checkCanForecast();
-      // Future.delayed(Duration.zero, () async {
-      //   Utility.success(context, local.t("generated_assessment_successfully"));
-      // });
     } else {
       print("Cannot Generate");
-      Future.delayed(Duration.zero, () async {
-        Utility.error(context, local.t("cannot_generate_assessments"));
-      });
+      Utility.error(context, local.t("cannot_generate_assessments"));
     }
 
     if (!mounted) return;
@@ -457,8 +452,32 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
       }
     }
 
-    if (vitalValues.length >= 7) {
+    if (vitalValues.length >= 6) {
+      // Changed the condition to 6 instead of 7
       print("Generating Forecast");
+      final currentAssessment = vitalValues
+          .last; // Get the vital signs of the current status assessment
+      final currentDoc = assessmentDocs
+          .last; // Get the document ID of the current status assessment
+
+      // Wait for the current status assessment to be added to the Firebase collection before generating the forecast
+      await FirebaseFirestore.instance
+          .collection('assessments')
+          .doc(currentDoc)
+          .get()
+          .then((doc) {
+        if (doc.exists) {
+          print("Current assessment added to Firebase collection");
+        } else {
+          throw Exception(
+              'Current assessment not added to Firebase collection');
+        }
+      });
+
+      // Add the vital signs of the current status assessment to the list of assessments for the forecast
+      vitalValues.add(currentAssessment);
+      assessmentDocs.add(currentDoc);
+
       await generateForecast(vitalValues, assessmentDocs);
     }
   }
@@ -506,6 +525,12 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
     print("Generating Assessment");
     String url = '${Environment.host}status';
     print(url);
+
+    if (vitals == null || docs == null) {
+      // Return early if vital signs or related documents are null
+      return;
+    }
+
     final response = await http.post(
       Uri.parse(url),
       headers: <String, String>{
@@ -513,32 +538,39 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
       },
       body: jsonEncode({"vitals": vitals.toList()}),
     );
+
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
       if (kDebugMode) {
         print(json);
       }
+
       DocumentReference assessmentDocument;
-      FirebaseFirestore.instance.runTransaction((transaction) async {
-        try {
-          assessmentDocument =
-              FirebaseFirestore.instance.collection('assessments').doc();
-          transaction.set(assessmentDocument, {
-            'docId': assessmentDocument.id,
-            'patientId': userProvider.loginUser.documentId,
-            'status': json['status'],
-            'acuity': json['predicted_acuity'],
-            'vital_values': json['vitals'],
-            'vital_docs': docs,
-            'datetime': DateTime.now(),
-            'type': "status",
-          });
-        } catch (e) {
-          if (kDebugMode) {
-            print("Generate Assessment - Error Occured - $e");
-          }
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+      try {
+        // Use a batch write to ensure atomicity of the transaction
+        WriteBatch batch = firestore.batch();
+
+        assessmentDocument = firestore.collection('assessments').doc();
+        batch.set(assessmentDocument, {
+          'docId': assessmentDocument.id,
+          'patientId': userProvider.loginUser.documentId,
+          'status': json['status'],
+          'acuity': json['predicted_acuity'],
+          'vital_values': json['vitals'],
+          'vital_docs': docs,
+          'datetime': DateTime.now(),
+          'type': "status",
+        });
+
+        await batch.commit();
+      } catch (e) {
+        if (kDebugMode) {
+          print("Generate Assessment - Error Occured - $e");
         }
-      });
+        // Handle error
+      }
     }
   }
 
