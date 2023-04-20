@@ -459,7 +459,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
 
     if (vitalValues.length >= 7) {
       print("Generating Forecast");
-      generateForecast(vitalValues, assessmentDocs);
+      await generateForecast(vitalValues, assessmentDocs);
     }
   }
 
