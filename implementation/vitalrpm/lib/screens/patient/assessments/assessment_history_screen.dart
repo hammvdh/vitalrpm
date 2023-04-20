@@ -66,7 +66,6 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
         vitalDocs.add(measurement['docId'].toString());
       }
     }
-    print("Vital Signs $vitalsigns");
     return {"vitals": vitalsigns, "documents": vitalDocs};
   }
 
@@ -496,9 +495,6 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
     );
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
-      if (kDebugMode) {
-        print(json);
-      }
       DocumentReference assessmentDocument;
       FirebaseFirestore.instance.runTransaction((transaction) async {
         try {
@@ -543,9 +539,6 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
 
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
-      if (kDebugMode) {
-        print(json);
-      }
 
       DocumentReference assessmentDocument;
       FirebaseFirestore firestore = FirebaseFirestore.instance;

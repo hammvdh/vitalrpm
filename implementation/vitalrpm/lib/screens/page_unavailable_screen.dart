@@ -5,10 +5,7 @@ import 'package:vitalrpm/app_localizations.dart';
 import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/models/user_model.dart';
 import 'package:vitalrpm/providers/user_provider.dart';
-import 'package:vitalrpm/screens/auth/auth_wrapper.dart';
-import 'package:vitalrpm/screens/change_language_screen.dart';
 import 'package:vitalrpm/widgets/bottom_navbar_widget.dart';
-import 'package:vitalrpm/widgets/loading_overlay.dart';
 
 class PageUnavailableScreen extends StatefulWidget {
   const PageUnavailableScreen({super.key});
@@ -96,7 +93,8 @@ class _PageUnavailableScreenState extends State<PageUnavailableScreen> {
                 ),
               ),
               Container(
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                   child: Text(
                     local.t('pnf_desc')!,
                     style: GoogleFonts.inter(
