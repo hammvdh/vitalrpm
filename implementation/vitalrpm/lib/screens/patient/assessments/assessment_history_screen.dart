@@ -113,7 +113,9 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
       await checkCanForecast();
     } else {
       print("Cannot Generate");
-      Utility.error(context, local.t("cannot_generate_assessments"));
+      Future.delayed(Duration.zero, () async {
+        Utility.error(context, local.t("cannot_generate_assessments"));
+      });
     }
 
     if (!mounted) return;
