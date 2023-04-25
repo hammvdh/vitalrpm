@@ -153,7 +153,7 @@ class _PatientHomeDashboardState extends State<PatientHomeDashboard> {
                               child: Text(
                                 local.t('how_are_you_right_now')!,
                                 style: GoogleFonts.inter(
-                                  fontSize: 23,
+                                  fontSize: 20,
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700,
                                 ),

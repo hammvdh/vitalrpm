@@ -39,6 +39,7 @@ dependencies:
   animated_custom_dropdown: 1.4.0
   uuid: ^3.0.7
   another_flushbar: ^1.12.29
+  firebase_performance: ^0.9.1+1
 
 dev_dependencies:
   flutter_test:
