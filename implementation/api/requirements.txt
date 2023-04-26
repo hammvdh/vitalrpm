@@ -1,0 +1,7 @@
+Flask==2.2.3
+gunicorn==20.1.0
+numpy==1.21.6
+scikit_learn==1.0.2
+xgboost==1.7.5
+google-cloud-storage==1.44.0
+google-auth==2.3.0
