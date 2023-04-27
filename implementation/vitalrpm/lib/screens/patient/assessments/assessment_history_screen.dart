@@ -111,7 +111,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
           measurements['vitals'], measurements['documents']);
       await checkCanForecast();
     } else {
-      print("Cannot Generate");
+      // print("Cannot Generate");
       Future.delayed(Duration.zero, () async {
         Utility.error(context, local.t("cannot_generate_assessments"));
       });
@@ -455,7 +455,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
 
     if (vitalValues.length >= 6) {
       // Changed the condition to 6 instead of 7
-      print("Generating Forecast");
+      // print("Generating Forecast");
       final currentAssessment = vitalValues
           .last; // Get the vital signs of the current status assessment
       final currentDoc = assessmentDocs
@@ -468,7 +468,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
           .get()
           .then((doc) {
         if (doc.exists) {
-          print("Current assessment added to Firebase collection");
+          // print("Current assessment added to Firebase collection");
         } else {
           throw Exception(
               'Current assessment not added to Firebase collection');
@@ -485,7 +485,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
 
   generateForecast(assessments, docs) async {
     String url = '${Environment.host}forecast';
-    print(url);
+    // print(url);
     final response = await http.post(
       Uri.parse(url),
       headers: <String, String>{
@@ -512,7 +512,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
           });
         } catch (e) {
           if (kDebugMode) {
-            print("Generate Forecast - Error Occured - $e");
+            // print("Generate Forecast - Error Occured - $e");
           }
         }
       });
@@ -520,9 +520,9 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
   }
 
   generateAssessment(vitals, docs) async {
-    print("Generating Assessment");
+    // print("Generating Assessment");
     String url = '${Environment.host}status';
-    print(url);
+    // print(url);
 
     if (vitals == null || docs == null) {
       // Return early if vital signs or related documents are null
@@ -562,7 +562,7 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
         await batch.commit();
       } catch (e) {
         if (kDebugMode) {
-          print("Generate Assessment - Error Occured - $e");
+          // print("Generate Assessment - Error Occured - $e");
         }
         // Handle error
       }

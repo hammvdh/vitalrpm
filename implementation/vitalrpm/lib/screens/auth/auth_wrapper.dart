@@ -45,7 +45,7 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
   }
 
   goToHome(String type) {
-    print(type);
+    // print(type);
     if (type == "doctor") {
       return Navigator.pushReplacement(
         context,

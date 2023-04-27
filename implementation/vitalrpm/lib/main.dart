@@ -52,11 +52,11 @@ class _MyAppState extends State<MyApp> {
     user = FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user == null) {
         if (kDebugMode) {
-          print('User is currently signed out!');
+          // print('User is currently signed out!');
         }
       } else {
         if (kDebugMode) {
-          print('User is signed in!');
+          // print('User is signed in!');
         }
       }
     });

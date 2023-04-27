@@ -451,20 +451,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void register() async {
-    print(
-        '-------------------- Registration in Progress -----------------------');
+    // print(
+    //     '-------------------- Registration in Progress -----------------------');
     UserCredential userCredential = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(
             email: emailController.text.trim(),
             password: passwordController.text.trim());
     // var userId = userCredential.user?.uid;
-    await userProvider.createUser(
-      userCredential.user?.uid,
-      emailController.text.trim(),
-      firstNameController.text.trim(),
-      lastNameController.text.trim(),
-      userTypeController.text.trim(),
-    );
+    Future.delayed(Duration.zero, () async {
+      await userProvider.createUser(
+        userCredential.user?.uid,
+        emailController.text.trim(),
+        firstNameController.text.trim(),
+        lastNameController.text.trim(),
+        userTypeController.text.trim(),
+      );
+    });
+
     await Navigator.pushReplacement(
       context,
       MaterialPageRoute(

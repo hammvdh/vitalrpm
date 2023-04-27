@@ -39,7 +39,7 @@ class _AddPatientsScreenState extends State<AddPatientsScreen> {
         _users = querySnapshot.docs;
       });
     } catch (e) {
-      print(e.toString());
+      // print(e.toString());
     }
   }
 
@@ -50,7 +50,7 @@ class _AddPatientsScreenState extends State<AddPatientsScreen> {
           .doc(userId)
           .update({'doctor': doctorId});
     } catch (e) {
-      print(e.toString());
+      // print(e.toString());
     }
   }
 

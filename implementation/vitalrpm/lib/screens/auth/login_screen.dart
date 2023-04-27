@@ -312,7 +312,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void login() async {
-    print('-------------------- Login in Progress -----------------------');
+    // print('-------------------- Login in Progress -----------------------');
     // LoadingOverlay.of(context).show();
     await userProvider.login(emailController, passwordController);
 

@@ -467,12 +467,12 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
 
     if (type == "Blood Pressure") {
       if (systolic.isEmpty || diastolic.isEmpty) {
-        print("bp_validation");
+        // print("bp_validation");
         return;
       }
     } else {
       if (reading.isEmpty) {
-        print("Reading value is required.");
+        // print("Reading value is required.");
         return;
       }
     }
@@ -503,7 +503,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
 
         Navigator.pop(context);
       } catch (e) {
-        print("Add Measurement - Unable to add measurement - $e");
+        // print("Add Measurement - Unable to add measurement - $e");
       }
     });
   }

@@ -139,15 +139,15 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            const SizedBox(height: 5),
-                            Text(
-                              lastReading,
-                              style: GoogleFonts.inter(
-                                fontSize: 16,
-                                color: AppColors.textGrey,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
+                            // const SizedBox(height: 5),
+                            // Text(
+                            //   lastReading,
+                            //   style: GoogleFonts.inter(
+                            //     fontSize: 16,
+                            //     color: AppColors.textGrey,
+                            //     fontWeight: FontWeight.w500,
+                            //   ),
+                            // ),
                           ],
                         ),
                       )
@@ -217,12 +217,12 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
                                 ),
                               );
                             }
-                            Future.delayed(Duration.zero, () async {
-                              setState(() {
-                                lastReading =
-                                    getLastReading(snapshot.data!.docs);
-                              });
-                            });
+                            // Future.delayed(Duration.zero, () async {
+                            //   setState(() {
+                            //     lastReading =
+                            //         getLastReading(snapshot.data!.docs);
+                            //   });
+                            // });
 
                             return Padding(
                               padding: const EdgeInsets.symmetric(

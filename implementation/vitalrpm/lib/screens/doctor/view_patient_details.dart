@@ -31,7 +31,7 @@ class _ViewPatientDetailsState extends State<ViewPatientDetails> {
           .doc(userId)
           .update({'doctor': ''});
     } catch (e) {
-      print(e.toString());
+      // print(e.toString());
     }
   }
 

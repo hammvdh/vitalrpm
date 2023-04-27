@@ -41,7 +41,7 @@ class UserProvider extends ChangeNotifier {
           'doctor': userType.toLowerCase() != "doctor" ? '' : 'N/A'
         });
       } catch (e) {
-        print("RegisterAPI - Create User Error - $e");
+        // print("RegisterAPI - Create User Error - $e");
       }
     });
   }
@@ -53,7 +53,7 @@ class UserProvider extends ChangeNotifier {
         password: passwordController.text.trim(),
       );
     } on FirebaseAuthException catch (e) {
-      print("LoginAPI - Login Error Occurred - $e");
+      // print("LoginAPI - Login Error Occurred - $e");
     }
   }
 
@@ -80,7 +80,7 @@ class UserProvider extends ChangeNotifier {
     user.userType = userDoc.get('usertype');
     user.doctor = userDoc.get('doctor');
     user.doctorId = userDoc.get('doctorId');
-    print('User Logged In - ${user.userType.trim()}');
+    // print('User Logged In - ${user.userType.trim()}');
     loginUser = user;
     notifyListeners();
   }
