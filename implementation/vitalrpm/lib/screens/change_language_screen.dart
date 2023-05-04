@@ -179,7 +179,8 @@ class ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                     ),
                   );
                 }).toList(),
-              )
+              ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
