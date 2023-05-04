@@ -92,6 +92,12 @@ class _MyAppState extends State<MyApp> {
         supportedLocales: const [
           Locale('en', 'US'),
           Locale('si', 'LK'),
+          Locale('ar', 'KW'),
+          Locale('ta', 'LK'),
+          Locale('ko', 'KO'),
+          Locale('ms', 'MS'),
+          Locale('hi', 'IN'),
+          Locale('fr', 'FR'),
         ],
         localizationsDelegates: const [
           AppLocalizations.delegate,

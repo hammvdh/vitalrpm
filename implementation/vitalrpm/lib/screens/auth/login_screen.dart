@@ -18,11 +18,11 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   late UserProvider userProvider;
   late AppLocalizations local;
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
 
   bool _obscureText = true;
 
@@ -314,10 +314,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void login() async {
     // print('-------------------- Login in Progress -----------------------');
-    // LoadingOverlay.of(context).show();
     await userProvider.login(emailController, passwordController);
-
-    // LoadingOverlay.of(context).hide();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
