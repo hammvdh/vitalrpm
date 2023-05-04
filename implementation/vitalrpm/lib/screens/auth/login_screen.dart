@@ -7,6 +7,7 @@ import 'package:vitalrpm/const/color_const.dart';
 import 'package:vitalrpm/providers/user_provider.dart';
 import 'package:vitalrpm/screens/auth/auth_wrapper.dart';
 import 'package:vitalrpm/screens/auth/register_screen.dart';
+import 'package:vitalrpm/screens/page_unavailable_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -221,13 +222,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           GestureDetector(
                             onTap: () => {
-                              //   Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) =>
-                              //         ForgotPasswordScreen(),
-                              //   ),
-                              // )
+                              Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                  builder: (context) =>
+                                      const PageUnavailableScreen(),
+                                ),
+                              ),
                             },
                             child: Text(
                               'Forgot Password?',

@@ -12,18 +12,18 @@ class UserProvider extends ChangeNotifier {
     DocumentReference userMasterDocument;
     final user = UserModel();
 
-    FirebaseFirestore.instance.runTransaction((transaction) async {
-      try {
-        const uuid = Uuid();
-        final doctorId = uuid.v4();
-        userMasterDocument =
-            FirebaseFirestore.instance.collection('usermaster').doc();
-        user.documentId = userMasterDocument.id;
-        user.userId = userId;
-        user.email = email!;
-        user.firstName = firstname!;
-        user.lastName = lastname!;
-        user.userType = userType!;
+    try {
+      const uuid = Uuid();
+      final doctorId = uuid.v4();
+      userMasterDocument =
+          FirebaseFirestore.instance.collection('usermaster').doc();
+      user.documentId = userMasterDocument.id;
+      user.userId = userId;
+      user.email = email!;
+      user.firstName = firstname!;
+      user.lastName = lastname!;
+      user.userType = userType!;
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
         transaction.set(userMasterDocument, {
           'docId': user.documentId,
           'userId': user.userId,
@@ -40,10 +40,10 @@ class UserProvider extends ChangeNotifier {
           'doctorId': userType.toLowerCase() == "doctor" ? doctorId : 'N/A',
           'doctor': userType.toLowerCase() != "doctor" ? '' : 'N/A'
         });
-      } catch (e) {
-        // print("RegisterAPI - Create User Error - $e");
-      }
-    });
+      });
+    } catch (e) {
+      // Handle error here
+    }
   }
 
   Future<void> login(emailController, passwordController) async {

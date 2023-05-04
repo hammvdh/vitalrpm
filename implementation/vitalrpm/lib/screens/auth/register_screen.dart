@@ -77,16 +77,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      // const SizedBox(height: 5),
-                      // Text(
-                      //   "Let's get you started.",
-                      //   style: GoogleFonts.inter(
-                      //     color: AppColors.darkBlue,
-                      //     fontSize: 18,
-                      //     fontWeight: FontWeight.w500,
-                      //     height: 1.3,
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
@@ -339,7 +329,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             child: TextFormField(
                               controller: passwordController,
                               obscureText: _obscureText,
-
                               textInputAction: TextInputAction.done,
                               validator: (input) {
                                 if (input!.length < 6) {
@@ -453,12 +442,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void register() async {
     // print(
     //     '-------------------- Registration in Progress -----------------------');
-    UserCredential userCredential = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(
-            email: emailController.text.trim(),
-            password: passwordController.text.trim());
-    // var userId = userCredential.user?.uid;
-    Future.delayed(Duration.zero, () async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: emailController.text.trim(),
+              password: passwordController.text.trim());
+
       await userProvider.createUser(
         userCredential.user?.uid,
         emailController.text.trim(),
@@ -466,13 +455,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
         lastNameController.text.trim(),
         userTypeController.text.trim(),
       );
-    });
 
-    await Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const AuthenticationWrapper(),
-      ),
-    );
+      await Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const AuthenticationWrapper(),
+        ),
+      );
+    } catch (e) {
+      print(e);
+    }
   }
 }
