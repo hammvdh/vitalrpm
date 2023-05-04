@@ -40,7 +40,7 @@ class ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
       temp = const Locale("ta", "LK");
       prefs.setString(StorageKeys.languageCode, "ta");
     } else if (languageItem.code == "si") {
-      temp = const Locale("ms", "MS");
+      temp = const Locale("ms", "MY");
       prefs.setString(StorageKeys.languageCode, "ms");
     } else if (languageItem.code == "ar") {
       temp = const Locale("ar", "KW");
@@ -56,6 +56,7 @@ class ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
       prefs.setString(StorageKeys.languageCode, "hi");
     } else if (languageItem.code == "id") {
       temp = const Locale("id", "ID");
+      prefs.setString(StorageKeys.languageCode, "id");
     } else {
       temp = const Locale("en", "US");
       prefs.setString(StorageKeys.languageCode, "en");

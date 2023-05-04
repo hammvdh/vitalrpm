@@ -60,7 +60,7 @@ class CommonProvider extends ChangeNotifier {
     languageList.add(Entity(
       id: 7,
       code: "ms",
-      description: "Melayu",
+      description: "Malay",
       type: "Language",
       parentId: 0,
     ));

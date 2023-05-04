@@ -53,7 +53,7 @@ class SplashScreenState extends State<SplashScreen> {
       } else if (languageCode == "ta") {
         temp = const Locale("ta", "LK");
       } else if (languageCode == "si") {
-        temp = const Locale("ms", "MS");
+        temp = const Locale("ms", "MY");
       } else if (languageCode == "ar") {
         temp = const Locale("ar", "KW");
       } else if (languageCode == "ko") {
