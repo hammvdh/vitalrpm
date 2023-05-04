@@ -50,6 +50,20 @@ class SplashScreenState extends State<SplashScreen> {
       final String? languageCode = prefs.getString(StorageKeys.languageCode);
       if (languageCode == "si") {
         temp = const Locale("si", "LK");
+      } else if (languageCode == "ta") {
+        temp = const Locale("ta", "LK");
+      } else if (languageCode == "si") {
+        temp = const Locale("ms", "MS");
+      } else if (languageCode == "ar") {
+        temp = const Locale("ar", "KW");
+      } else if (languageCode == "ko") {
+        temp = const Locale("ko", "KO");
+      } else if (languageCode == "fr") {
+        temp = const Locale("fr", "FR");
+      } else if (languageCode == "hi") {
+        temp = const Locale("hi", "IN");
+      } else if (languageCode == "id") {
+        temp = const Locale("id", "ID");
       } else {
         temp = const Locale("en", "US");
       }

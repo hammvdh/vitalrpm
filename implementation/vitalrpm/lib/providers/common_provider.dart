@@ -16,9 +16,58 @@ class CommonProvider extends ChangeNotifier {
       parentId: 0,
     ));
     languageList.add(Entity(
-      id: 0,
+      id: 2,
       code: "si",
       description: "සිංහල",
+      type: "Language",
+      parentId: 0,
+    ));
+    languageList.add(Entity(
+      id: 2,
+      code: "ta",
+      description: "தமிழ்",
+      type: "Language",
+      parentId: 0,
+    ));
+    languageList.add(Entity(
+      id: 3,
+      code: "ar",
+      description: "عربي",
+      type: "Language",
+      parentId: 0,
+    ));
+    languageList.add(Entity(
+      id: 4,
+      code: "ko",
+      description: "한국인",
+      type: "Language",
+      parentId: 0,
+    ));
+    languageList.add(Entity(
+      id: 5,
+      code: "hi",
+      description: "हिंदी",
+      type: "Language",
+      parentId: 0,
+    ));
+    languageList.add(Entity(
+      id: 6,
+      code: "fr",
+      description: "Français",
+      type: "Language",
+      parentId: 0,
+    ));
+    languageList.add(Entity(
+      id: 7,
+      code: "ms",
+      description: "Melayu",
+      type: "Language",
+      parentId: 0,
+    ));
+    languageList.add(Entity(
+      id: 8,
+      code: "id",
+      description: "Bahasa",
       type: "Language",
       parentId: 0,
     ));

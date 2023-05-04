@@ -35,7 +35,27 @@ class ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
     Locale temp;
     if (languageItem.code == "si") {
       temp = const Locale("si", "LK");
+      prefs.setString(StorageKeys.languageCode, "si");
+    } else if (languageItem.code == "ta") {
+      temp = const Locale("ta", "LK");
+      prefs.setString(StorageKeys.languageCode, "ta");
+    } else if (languageItem.code == "si") {
+      temp = const Locale("ms", "MS");
+      prefs.setString(StorageKeys.languageCode, "ms");
+    } else if (languageItem.code == "ar") {
+      temp = const Locale("ar", "KW");
       prefs.setString(StorageKeys.languageCode, "ar");
+    } else if (languageItem.code == "ko") {
+      temp = const Locale("ko", "KO");
+      prefs.setString(StorageKeys.languageCode, "ko");
+    } else if (languageItem.code == "fr") {
+      temp = const Locale("fr", "FR");
+      prefs.setString(StorageKeys.languageCode, "fr");
+    } else if (languageItem.code == "hi") {
+      temp = const Locale("hi", "IN");
+      prefs.setString(StorageKeys.languageCode, "hi");
+    } else if (languageItem.code == "id") {
+      temp = const Locale("id", "ID");
     } else {
       temp = const Locale("en", "US");
       prefs.setString(StorageKeys.languageCode, "en");

@@ -116,7 +116,8 @@ class _MeasurementHistoryScreenState extends State<MeasurementHistoryScreen> {
                           Navigator.pop(context);
                         },
                         child: const Padding(
-                          padding: EdgeInsets.only(top: 15, left: 15),
+                          padding:
+                              EdgeInsets.only(top: 15, left: 15, right: 15),
                           child: Icon(
                             Icons.arrow_back,
                             color: Colors.white,

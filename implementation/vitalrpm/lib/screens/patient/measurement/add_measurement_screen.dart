@@ -85,7 +85,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                     Navigator.pop(context);
                   },
                   child: const Padding(
-                    padding: EdgeInsets.only(top: 15, left: 15),
+                    padding: EdgeInsets.only(top: 15, left: 15, right: 15),
                     child: Icon(
                       Icons.arrow_back,
                       color: Colors.white,
@@ -341,7 +341,7 @@ class _AddMeasurementScreenState extends State<AddMeasurementScreen> {
                             ),
                             const SizedBox(height: 10),
                             CustomDropdown(
-                              hintText: 'Before or After Meals?',
+                              hintText: local.t('meals')!,
                               items: [
                                 local.t('before_meals')!,
                                 local.t('after_meals')!,
